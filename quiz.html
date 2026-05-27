@@ -31,7 +31,6 @@
     --text-secondary: #6b6b67;
     --radius: 12px;
     --radius-sm: 8px;
-    --timer-color: var(--purple);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -62,276 +61,163 @@
     padding: 2rem 1rem 4rem;
   }
 
-  .container {
-    width: 100%;
-    max-width: 560px;
-  }
-
+  .container { width: 100%; max-width: 600px; }
   .screen { display: none; }
   .screen.active { display: block; }
 
   /* ── HOME ── */
   .brand {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 2rem;
   }
   .brand-icon {
-    width: 36px; height: 36px;
-    background: var(--purple);
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+    width: 36px; height: 36px; background: var(--purple); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
   }
-  .brand-name {
-    font-size: 20px; font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
+  .brand-name { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
 
   .hero-title {
-    font-size: 36px; font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-    margin-bottom: 0.6rem;
+    font-size: 36px; font-weight: 700; line-height: 1.15;
+    letter-spacing: -0.03em; margin-bottom: 0.6rem;
   }
   .hero-title em { font-style: normal; color: var(--purple); }
   .hero-sub {
-    font-size: 15px;
-    color: var(--text-secondary);
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
+    font-size: 15px; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;
   }
 
   .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.75rem;
   }
 
+  /* Category tabs */
+  .category-tabs {
+    display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .cat-tab {
+    padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--surface); font-family: 'Sora', sans-serif;
+    font-size: 12px; font-weight: 600; color: var(--text-secondary);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .cat-tab:hover { border-color: var(--border-md); color: var(--text); }
+  .cat-tab.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+
   .topics-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 2rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem;
   }
 
   .topic-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.1rem 1rem;
-    cursor: pointer;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 1.1rem 1rem; cursor: pointer;
     transition: border-color 0.15s, transform 0.12s, box-shadow 0.12s;
-    position: relative;
-    overflow: hidden;
-  }
-  .topic-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.15s;
   }
   .topic-card:hover { transform: translateY(-2px); border-color: var(--border-md); }
   .topic-card.selected { border: 2px solid var(--purple); }
   .topic-card.selected .topic-icon-wrap { background: var(--purple-light); }
 
   .topic-icon-wrap {
-    width: 40px; height: 40px;
-    border-radius: 10px;
-    background: var(--bg);
+    width: 40px; height: 40px; border-radius: 10px; background: var(--bg);
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    margin-bottom: 0.75rem;
-    transition: background 0.15s;
+    font-size: 20px; margin-bottom: 0.75rem; transition: background 0.15s;
   }
   .topic-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
   .topic-meta { font-size: 12px; color: var(--text-secondary); }
+  .topic-tag {
+    display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .tag-general { background: var(--purple-light); color: var(--purple-dark); }
+  .tag-programming { background: var(--teal-light); color: var(--teal); }
 
   .difficulty-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 2rem;
+    display: flex; gap: 8px; margin-bottom: 2rem;
   }
   .diff-btn {
-    flex: 1;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.6rem 0.5rem;
-    font-family: 'Sora', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: center;
+    flex: 1; background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 0.6rem 0.5rem;
+    font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
+    color: var(--text-secondary); cursor: pointer; transition: all 0.15s; text-align: center;
   }
   .diff-btn:hover { border-color: var(--border-md); color: var(--text); }
   .diff-btn.selected { border: 2px solid var(--purple); color: var(--purple); background: var(--purple-light); }
 
   .start-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
   .hint-text { font-size: 13px; color: var(--text-secondary); }
 
   .btn-primary {
-    background: var(--purple);
-    color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 0.7rem 1.6rem;
-    font-family: 'Sora', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.12s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    background: var(--purple); color: #fff; border: none; border-radius: var(--radius-sm);
+    padding: 0.7rem 1.6rem; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s, transform 0.12s;
+    display: inline-flex; align-items: center; gap: 6px;
   }
   .btn-primary:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
   .btn-primary:active:not(:disabled) { transform: scale(0.97); }
   .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
 
   .btn-outline {
-    background: transparent;
-    color: var(--text);
-    border: 1.5px solid var(--border-md);
-    border-radius: var(--radius-sm);
-    padding: 0.65rem 1.25rem;
-    font-family: 'Sora', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    background: transparent; color: var(--text); border: 1.5px solid var(--border-md);
+    border-radius: var(--radius-sm); padding: 0.65rem 1.25rem;
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: background 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
   }
   .btn-outline:hover { background: var(--bg); }
 
   /* ── QUIZ ── */
   .quiz-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;
   }
   .topic-badge {
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: var(--purple-light);
-    color: var(--purple-dark);
+    font-size: 12px; font-weight: 600; padding: 4px 12px;
+    border-radius: 20px; background: var(--purple-light); color: var(--purple-dark);
   }
-
-  /* Timer */
-  .timer-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .timer-ring-wrap {
-    position: relative;
-    width: 42px; height: 42px;
-  }
-  .timer-ring-wrap svg {
-    position: absolute; inset: 0;
-    transform: rotate(-90deg);
-  }
+  .timer-wrap { display: flex; align-items: center; gap: 8px; }
+  .timer-ring-wrap { position: relative; width: 42px; height: 42px; }
+  .timer-ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
   .timer-ring-bg { stroke: var(--border); fill: none; stroke-width: 3; }
   .timer-ring-fg { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
   .timer-num {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text);
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--text);
   }
   .timer-num.urgent { color: var(--red); }
 
   .progress-bar-wrap {
-    height: 3px;
-    background: var(--border);
-    border-radius: 2px;
-    margin-bottom: 1.75rem;
-    overflow: hidden;
+    height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 1.75rem; overflow: hidden;
   }
-  .progress-bar {
-    height: 3px;
-    background: var(--purple);
-    border-radius: 2px;
-    transition: width 0.4s ease;
-  }
+  .progress-bar { height: 3px; background: var(--purple); border-radius: 2px; transition: width 0.4s ease; }
 
   .q-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 500; }
-  .q-text {
-    font-size: 19px;
-    font-weight: 600;
-    line-height: 1.45;
-    letter-spacing: -0.01em;
-    margin-bottom: 1.5rem;
-  }
+  .q-text { font-size: 19px; font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
 
   .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
 
   .option-btn {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.8rem 1rem;
-    text-align: left;
-    font-family: 'Sora', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    cursor: pointer;
+    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem; text-align: left; font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer;
     transition: border-color 0.12s, background 0.12s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
   }
-  .option-btn:hover:not(:disabled) {
-    border-color: var(--purple);
-    transform: translateX(3px);
-  }
+  .option-btn:hover:not(:disabled) { border-color: var(--purple); transform: translateX(3px); }
   .option-btn:disabled { cursor: default; }
   .option-btn.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
   .option-btn.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
 
   .opt-letter {
-    width: 26px; height: 26px;
-    border-radius: 6px;
-    background: var(--bg);
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'DM Mono', monospace;
+    width: 26px; height: 26px; border-radius: 6px; background: var(--bg);
+    font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace;
     display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    color: var(--text-secondary);
-    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0; color: var(--text-secondary); transition: background 0.15s, color 0.15s;
   }
   .option-btn.correct .opt-letter { background: var(--green); color: #fff; }
   .option-btn.wrong .opt-letter { background: var(--red); color: #fff; }
 
   .feedback-bar {
-    font-size: 14px;
-    font-weight: 500;
-    padding: 0.65rem 1rem;
-    border-radius: var(--radius-sm);
-    margin-bottom: 1rem;
-    line-height: 1.5;
+    font-size: 14px; font-weight: 500; padding: 0.65rem 1rem;
+    border-radius: var(--radius-sm); margin-bottom: 1rem; line-height: 1.5;
   }
   .feedback-bar.correct { background: var(--green-light); color: var(--green); }
   .feedback-bar.wrong { background: var(--red-light); color: var(--red); }
@@ -342,35 +228,25 @@
   /* ── RESULTS ── */
   .result-wrap { padding: 2rem 0; text-align: center; }
   .result-emoji { font-size: 60px; margin-bottom: 1rem; }
-  .result-score {
-    font-size: 52px;
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    color: var(--purple);
-    margin-bottom: 0.2rem;
-  }
+  .result-score { font-size: 52px; font-weight: 700; letter-spacing: -0.04em; color: var(--purple); margin-bottom: 0.2rem; }
   .result-topic { font-size: 14px; color: var(--text-secondary); margin-bottom: 0.4rem; }
   .result-msg { font-size: 18px; font-weight: 600; margin-bottom: 1.75rem; }
 
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    max-width: 420px;
-    margin: 0 auto 2rem;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    max-width: 420px; margin: 0 auto 2rem;
   }
   .stat-card {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem 0.5rem;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 0.75rem 0.5rem;
   }
   .stat-num { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
   .stat-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-
   .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
-  /* ── ANIMATIONS ── */
+  /* hidden utility */
+  .hidden { display: none !important; }
+
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   .screen.active { animation: fadeIn 0.25s ease; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
@@ -391,7 +267,13 @@
     <h1 class="hero-title">Test your <em>knowledge</em>.<br>Beat the clock.</h1>
     <p class="hero-sub">Pick a topic, choose your difficulty, and answer 5 questions before time runs out.</p>
 
-    <div class="section-label">Choose a topic</div>
+    <div class="section-label">Category</div>
+    <div class="category-tabs">
+      <button class="cat-tab active" onclick="filterCategory('all')">All Topics</button>
+      <button class="cat-tab" onclick="filterCategory('general')">General</button>
+      <button class="cat-tab" onclick="filterCategory('programming')">Programming</button>
+    </div>
+
     <div class="topics-grid" id="topics-grid"></div>
 
     <div class="section-label">Difficulty</div>
@@ -411,7 +293,7 @@
   <div id="quiz-screen" class="screen">
     <div style="padding-top:1.5rem;">
       <div class="quiz-top">
-        <span class="topic-badge" id="quiz-badge">AI Quiz</span>
+        <span class="topic-badge" id="quiz-badge">Quiz</span>
         <div class="timer-wrap">
           <div class="timer-ring-wrap">
             <svg viewBox="0 0 42 42">
@@ -424,11 +306,9 @@
           <span style="font-size:12px;color:var(--text-secondary);" id="q-counter">1/5</span>
         </div>
       </div>
-
       <div class="progress-bar-wrap">
         <div class="progress-bar" id="progress-bar" style="width:20%"></div>
       </div>
-
       <div class="q-label" id="q-label">Question 1 of 5</div>
       <div class="q-text" id="q-text"></div>
       <div class="options" id="options"></div>
@@ -444,7 +324,7 @@
     <div class="result-wrap">
       <div class="result-emoji" id="result-emoji">🎉</div>
       <div class="result-score" id="result-score">4/5</div>
-      <div class="result-topic" id="result-topic">AI Quiz · Medium</div>
+      <div class="result-topic" id="result-topic">Quiz · Medium</div>
       <div class="result-msg" id="result-msg">Great job!</div>
       <div class="stats-grid">
         <div class="stat-card">
@@ -475,14 +355,23 @@
 
 <script>
 const TOPICS = [
-  { id:'ai',     name:'AI Quiz',     icon:'🤖', accent:'#534AB7' },
-  { id:'movies', name:'Movie Quiz',  icon:'🎬', accent:'#993C1D' },
-  { id:'coding', name:'Coding Quiz', icon:'💻', accent:'#0F6E56' },
-  { id:'anime',  name:'Anime Quiz',  icon:'⚡', accent:'#854F0B' }
+  // General
+  { id:'ai',          name:'AI Quiz',         icon:'🤖', category:'general' },
+  { id:'movies',      name:'Movie Quiz',       icon:'🎬', category:'general' },
+  { id:'coding',      name:'Web Coding',       icon:'💻', category:'general' },
+  { id:'anime',       name:'Anime Quiz',       icon:'⚡', category:'general' },
+  // Programming
+  { id:'python',      name:'Python',           icon:'🐍', category:'programming' },
+  { id:'ml',          name:'Machine Learning', icon:'📊', category:'programming' },
+  { id:'deeplearning',name:'Deep Learning',    icon:'🧬', category:'programming' },
+  { id:'neural',      name:'Neural Networks',  icon:'🕸️', category:'programming' },
+  { id:'oop',         name:'OOP Concepts',     icon:'🏗️', category:'programming' },
+  { id:'cpp',         name:'C++ Quiz',         icon:'⚙️', category:'programming' },
 ];
 
 const DIFF_TIME = { easy: 30, medium: 20, hard: 10 };
 const LETTERS = ['A','B','C','D'];
+const CIRCUMFERENCE = 2 * Math.PI * 18;
 
 const QUESTIONS = {
   ai: [
@@ -524,28 +413,129 @@ const QUESTIONS = {
     { q:'Which anime features the Survey Corps fighting giant humanoid creatures?', opts:['Tokyo Ghoul','Demon Slayer','Attack on Titan','Fullmetal Alchemist'], ans:2 },
     { q:'What is Luffy\'s dream in "One Piece"?', opts:['To become the strongest swordsman','To find the All Blue','To become King of the Pirates','To return to his hometown'], ans:2 },
     { q:'In "My Hero Academia", what is the name of the top hero (All Might\'s successor)?', opts:['Bakugo','Todoroki','Deku (Izuku Midoriya)','Kirishima'], ans:2 }
+  ],
+
+  // ── PYTHON ──
+  python: [
+    { q:'What is the output of: type([]) in Python?', opts:["<class 'list'>","<class 'array'>","<class 'tuple'>","<class 'dict'>"], ans:0 },
+    { q:'Which keyword is used to define a function in Python?', opts:['function','func','define','def'], ans:3 },
+    { q:'What does the "self" parameter represent in a Python class method?', opts:['A global variable','The class itself','The current instance of the class','A static reference'], ans:2 },
+    { q:'What is a Python "list comprehension"?', opts:['A way to sort lists','A concise way to create lists using a single expression','A method to flatten nested lists','A loop that prints list elements'], ans:1 },
+    { q:'Which Python data type is immutable and ordered?', opts:['List','Dictionary','Set','Tuple'], ans:3 },
+    { q:'What does the "yield" keyword do in Python?', opts:['Returns a value and ends the function','Pauses a function and returns a value (generator)','Raises an exception','Imports a module'], ans:1 },
+    { q:'What is the output of: print(2 ** 10) in Python?', opts:['20','1024','512','2048'], ans:1 },
+    { q:'Which built-in Python function returns the length of an object?', opts:['size()','count()','len()','length()'], ans:2 },
+    { q:'What does "PEP 8" refer to in Python?', opts:['A Python version','Python\'s style guide','A machine learning library','A Python error code'], ans:1 },
+    { q:'Which Python library is primarily used for data manipulation and analysis?', opts:['NumPy','Matplotlib','Pandas','SciPy'], ans:2 }
+  ],
+
+  // ── MACHINE LEARNING ──
+  ml: [
+    { q:'What is the purpose of a "training set" in machine learning?', opts:['To test final model accuracy','To tune hyperparameters','To train the model on labeled data','To deploy the model'], ans:2 },
+    { q:'What does "regularization" help prevent in ML models?', opts:['Underfitting','Overfitting','Slow training','High bias'], ans:1 },
+    { q:'Which algorithm is used for classification AND regression tasks?', opts:['K-Means','PCA','Random Forest','DBSCAN'], ans:2 },
+    { q:'What does "k" represent in K-Nearest Neighbors (KNN)?', opts:['The number of iterations','The number of nearest neighbors to consider','The learning rate','The number of features'], ans:1 },
+    { q:'What is "feature scaling" used for in machine learning?', opts:['Reducing number of features','Normalizing feature values to a similar range','Removing outliers','Splitting data'], ans:1 },
+    { q:'Which metric is most appropriate for imbalanced classification datasets?', opts:['Accuracy','Mean Squared Error','F1-Score','R² Score'], ans:2 },
+    { q:'What is "cross-validation" used for in ML?', opts:['Cleaning training data','Evaluating model performance on unseen data','Selecting optimal features','Compressing the model'], ans:1 },
+    { q:'In linear regression, what does the slope of the line represent?', opts:['Intercept value','The error term','Rate of change of target per unit change in feature','The variance of predictions'], ans:2 },
+    { q:'What does PCA stand for?', opts:['Predictive Classification Algorithm','Principal Component Analysis','Partial Correlation Approach','Probabilistic Clustering Algorithm'], ans:1 },
+    { q:'Which type of learning does a recommendation system typically use?', opts:['Supervised learning','Unsupervised learning','Reinforcement learning','Collaborative filtering'], ans:3 }
+  ],
+
+  // ── DEEP LEARNING ──
+  deeplearning: [
+    { q:'Which framework, developed by Google, is most widely used for deep learning?', opts:['PyTorch','Keras','TensorFlow','Scikit-learn'], ans:2 },
+    { q:'What is an "epoch" in deep learning training?', opts:['One forward pass through a single sample','One full pass through the entire training dataset','One weight update step','One layer of the network'], ans:1 },
+    { q:'What is the "vanishing gradient" problem?', opts:['Gradients become too large during backpropagation','Gradients become extremely small, slowing learning in early layers','The model forgets previous weights','The loss function becomes zero'], ans:1 },
+    { q:'Which activation function is most commonly used in hidden layers of modern deep networks?', opts:['Sigmoid','Tanh','ReLU','Softmax'], ans:2 },
+    { q:'What does "dropout" do in a neural network?', opts:['Removes low-performing layers','Randomly deactivates neurons during training to reduce overfitting','Speeds up forward propagation','Normalizes the output layer'], ans:1 },
+    { q:'What is "batch normalization" primarily used for?', opts:['Reducing batch size','Normalizing layer inputs to stabilize and speed up training','Shuffling training data','Pruning the model'], ans:1 },
+    { q:'Which architecture is best suited for sequential data like text or time series?', opts:['CNN','GAN','RNN/LSTM','Autoencoder'], ans:2 },
+    { q:'What is a "hyperparameter" in deep learning?', opts:['A weight updated during training','A configuration set before training begins (e.g., learning rate)','An output of the final layer','A type of activation function'], ans:1 },
+    { q:'What does a "loss function" measure?', opts:['Model size in memory','Difference between predictions and actual values','Number of trainable parameters','Learning rate decay'], ans:1 },
+    { q:'Which optimizer adapts the learning rate for each parameter individually?', opts:['SGD','Adam','Momentum','Gradient Descent'], ans:1 }
+  ],
+
+  // ── NEURAL NETWORKS ──
+  neural: [
+    { q:'What is the basic computational unit of a neural network?', opts:['Node','Neuron (Perceptron)','Weight','Layer'], ans:1 },
+    { q:'In a neural network, what does "backpropagation" do?', opts:['Feeds data forward through layers','Computes gradients and updates weights using chain rule','Randomly initializes weights','Normalizes input data'], ans:1 },
+    { q:'What type of neural network is primarily used for image recognition?', opts:['RNN','GAN','CNN (Convolutional Neural Network)','Autoencoder'], ans:2 },
+    { q:'What does the "softmax" function output?', opts:['A single binary value','A probability distribution over classes','The raw logit scores','A normalized regression value'], ans:1 },
+    { q:'What is a "weight" in a neural network?', opts:['A bias term','A learnable parameter that scales the input signal','The activation output','The gradient value'], ans:1 },
+    { q:'Which layer type is typically used as the final layer for binary classification?', opts:['ReLU layer','Sigmoid output layer','Convolutional layer','Flatten layer'], ans:1 },
+    { q:'What is the "bias" term in a neuron?', opts:['A regularization penalty','An additional learnable parameter that shifts the activation','The weight of the input','The learning rate'], ans:1 },
+    { q:'What does LSTM stand for?', opts:['Long Short-Term Memory','Linear Statistical Transfer Model','Layered Sequence Training Method','Large Scale Tensor Map'], ans:0 },
+    { q:'What is "transfer learning" in neural networks?', opts:['Moving a model to different hardware','Using a pre-trained model\'s weights as a starting point for a new task','Training two models simultaneously','Transferring data between layers'], ans:1 },
+    { q:'What problem do residual connections (ResNets) solve?', opts:['Overfitting in small datasets','Vanishing gradient problem in very deep networks','Slow inference speed','High memory usage during deployment'], ans:1 }
+  ],
+
+  // ── OOP ──
+  oop: [
+    { q:'What are the four main pillars of Object-Oriented Programming?', opts:['Loops, Functions, Classes, Objects','Encapsulation, Abstraction, Inheritance, Polymorphism','Variables, Methods, Interfaces, Structs','Compilation, Linking, Loading, Execution'], ans:1 },
+    { q:'What is "encapsulation" in OOP?', opts:['Inheriting methods from a parent class','Bundling data and methods that operate on it within a class','Creating multiple objects from one class','Overriding parent class methods'], ans:1 },
+    { q:'What does "inheritance" allow in OOP?', opts:['A class to hide its internal data','A class to acquire properties and methods from another class','An object to change its type at runtime','Multiple methods with the same name'], ans:1 },
+    { q:'What is "polymorphism" in OOP?', opts:['One class inheriting from many','The ability for different objects to respond to the same interface in different ways','Hiding implementation details','Creating immutable objects'], ans:1 },
+    { q:'What is an "abstract class"?', opts:['A class with no methods','A class that cannot be instantiated and may contain abstract methods','A class with only static methods','A class that is final and cannot be extended'], ans:1 },
+    { q:'What is the difference between method "overloading" and "overriding"?', opts:['They are the same thing','Overloading defines same method name with different params; overriding redefines a parent method in a child class','Overriding is compile-time; overloading is runtime','Overloading only works in Python'], ans:1 },
+    { q:'What is a "constructor" in OOP?', opts:['A method to destroy objects','A special method called when an object is created to initialize it','A method that returns the class type','A static method used for utility functions'], ans:1 },
+    { q:'What is the "interface" concept in OOP?', opts:['A graphical user interface','A contract defining method signatures a class must implement','A base class with default methods','A way to instantiate abstract classes'], ans:1 }
+  ],
+
+  // ── C++ ──
+  cpp: [
+    { q:'What is the correct way to declare a pointer to an integer in C++?', opts:['int &p;','int p*;','int *p;','pointer int p;'], ans:2 },
+    { q:'What does the "new" keyword do in C++?', opts:['Declares a new variable','Allocates memory on the heap and returns a pointer','Allocates memory on the stack','Creates a new class'], ans:1 },
+    { q:'What is the output of: cout << 10 / 3; in C++?', opts:['3.33','3','4','Error'], ans:1 },
+    { q:'Which operator is used to access a member of a class through a pointer?', opts:['.','::','->','&'], ans:2 },
+    { q:'What is a "destructor" in C++?', opts:['A function that creates objects','A special function called when an object is destroyed to free resources','An overloaded delete operator','A function that resets member variables'], ans:1 },
+    { q:'What is the Standard Template Library (STL) in C++?', opts:['A GUI toolkit','A set of template classes and functions like vector, map, and algorithms','An external paid library','A compiler extension'], ans:1 },
+    { q:'What does "virtual" keyword enable in C++?', opts:['Faster function calls','Runtime polymorphism through virtual function tables','Compile-time function inlining','Memory-mapped variables'], ans:1 },
+    { q:'What is the difference between "pass by value" and "pass by reference" in C++?', opts:['No difference','Pass by value copies the argument; pass by reference uses the original variable','Pass by reference is only for pointers','Pass by value is slower in all cases'], ans:1 },
+    { q:'Which C++ container maintains elements in sorted order automatically?', opts:['vector','deque','list','map'], ans:3 },
+    { q:'What does "const" before a variable declaration mean in C++?', opts:['The variable is global','The variable\'s value cannot be changed after initialization','The variable is allocated on the heap','The variable is a pointer'], ans:1 }
   ]
 };
 
-let selectedTopic = null, selectedDiff = 'easy';
+let selectedTopic = null, selectedDiff = 'easy', activeCategory = 'all';
 let questions = [], current = 0, score = 0, answered = false;
-let timerInterval = null, timeLeft = 0, totalTimeUsed = 0, questionStartTime = 0;
-const CIRCUMFERENCE = 2 * Math.PI * 18;
+let timerInterval = null, timeLeft = 0, totalTimeUsed = 0;
+
+function filterCategory(cat) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Deselect topic if it's no longer visible
+  if (selectedTopic) {
+    const t = TOPICS.find(t => t.id === selectedTopic);
+    if (cat !== 'all' && t.category !== cat) {
+      selectedTopic = null;
+      document.getElementById('start-btn').disabled = true;
+      document.getElementById('select-hint').textContent = 'Select a topic to begin';
+    }
+  }
+  renderTopics();
+}
 
 function renderTopics() {
   const grid = document.getElementById('topics-grid');
-  grid.innerHTML = TOPICS.map(t => `
-    <div class="topic-card" id="tc-${t.id}" onclick="selectTopic('${t.id}')">
+  const visible = activeCategory === 'all' ? TOPICS : TOPICS.filter(t => t.category === activeCategory);
+  grid.innerHTML = visible.map(t => `
+    <div class="topic-card ${selectedTopic === t.id ? 'selected' : ''}" id="tc-${t.id}" onclick="selectTopic('${t.id}')">
       <div class="topic-icon-wrap">${t.icon}</div>
       <div class="topic-name">${t.name}</div>
       <div class="topic-meta">5 questions</div>
+      <span class="topic-tag tag-${t.category}">${t.category === 'programming' ? '💻 Programming' : '🌐 General'}</span>
     </div>`).join('');
 }
 
 function selectTopic(id) {
   selectedTopic = id;
   document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('tc-' + id).classList.add('selected');
+  const el = document.getElementById('tc-' + id);
+  if (el) el.classList.add('selected');
   document.getElementById('start-btn').disabled = false;
   document.getElementById('select-hint').textContent = TOPICS.find(t => t.id === id).name + ' selected ✓';
 }
@@ -594,15 +584,11 @@ function renderQuestion() {
     </button>`).join('');
 
   timeLeft = total;
-  questionStartTime = Date.now();
   updateTimer(timeLeft, total);
   timerInterval = setInterval(() => {
     timeLeft--;
     updateTimer(timeLeft, total);
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      onTimeout();
-    }
+    if (timeLeft <= 0) { clearInterval(timerInterval); onTimeout(); }
   }, 1000);
 }
 
@@ -612,16 +598,9 @@ function updateTimer(t, total) {
   const numEl = document.getElementById('timer-num');
   ring.style.strokeDashoffset = offset;
   numEl.textContent = t;
-  if (t <= 5) {
-    ring.style.stroke = '#E24B4A';
-    numEl.classList.add('urgent');
-  } else if (t <= Math.floor(total * 0.4)) {
-    ring.style.stroke = '#BA7517';
-    numEl.classList.remove('urgent');
-  } else {
-    ring.style.stroke = '#534AB7';
-    numEl.classList.remove('urgent');
-  }
+  if (t <= 5) { ring.style.stroke = '#E24B4A'; numEl.classList.add('urgent'); }
+  else if (t <= Math.floor(total * 0.4)) { ring.style.stroke = '#BA7517'; numEl.classList.remove('urgent'); }
+  else { ring.style.stroke = '#534AB7'; numEl.classList.remove('urgent'); }
 }
 
 function onTimeout() {
@@ -642,21 +621,17 @@ function selectAnswer(idx) {
   answered = true;
   clearInterval(timerInterval);
   totalTimeUsed += DIFF_TIME[selectedDiff] - timeLeft;
-
   const q = questions[current];
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
   const chosen = document.getElementById('opt-' + idx);
   const fb = document.getElementById('feedback');
-
   if (idx === q.ans) {
-    chosen.classList.add('correct');
-    chosen.classList.add('pop');
+    chosen.classList.add('correct', 'pop');
     score++;
     fb.className = 'feedback-bar correct';
     fb.textContent = '✓ Correct!';
   } else {
-    chosen.classList.add('wrong');
-    chosen.classList.add('shake');
+    chosen.classList.add('wrong', 'shake');
     document.getElementById('opt-' + q.ans).classList.add('correct');
     fb.className = 'feedback-bar wrong';
     fb.textContent = `✗ Incorrect. The answer was: ${q.opts[q.ans]}`;
@@ -687,7 +662,6 @@ function showResults() {
   const tier = score === 5 ? 4 : score >= 4 ? 3 : score >= 3 ? 2 : score >= 2 ? 1 : 0;
   const emojis = ['😅','🤔','😊','🎉','🏆'];
   const msgs = ['Keep practising!','Not bad, keep going!','Solid effort!','Great job!','Perfect score!'];
-
   document.getElementById('result-emoji').textContent = emojis[tier];
   document.getElementById('result-score').textContent = `${score}/5`;
   document.getElementById('result-topic').textContent = `${t.name} · ${selectedDiff.charAt(0).toUpperCase() + selectedDiff.slice(1)}`;
