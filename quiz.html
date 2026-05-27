@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="style.css" />
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -34,55 +35,92 @@
     <h1 class="hero-title">Select your <em>topic</em>.</h1>
     <p class="hero-sub">Pick a topic below, choose your difficulty, and answer 5 questions before time runs out.</p>
 
-    <div class="section-label">Category</div>
-    <div class="category-tabs">
-      <button class="cat-tab active" onclick="filterCategory('all')">All Topics</button>
-      <button class="cat-tab" onclick="filterCategory('general')">General</button>
-      <button class="cat-tab" onclick="filterCategory('programming')">Programming</button>
+    <!-- ONLINE LOBBY CARD -->
+    <div id="online-lobby-card" style="display:none; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.02);">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--border); padding-bottom:0.55rem; margin-bottom:0.75rem;">
+        <span style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); display:flex; align-items:center; gap:6px;">
+          🌐 Real-time Online Battle
+        </span>
+        <span id="online-status-badge" style="font-size:10px; font-weight:600; padding:2px 8px; border-radius:10px; background:var(--red-light); color:var(--red);">OFFLINE</span>
+      </div>
+      
+      <div id="online-setup-view" style="display:flex; flex-direction:column; gap:10px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;" id="online-setup-buttons">
+          <button class="btn-primary" style="flex:1; justify-content:center; font-size:13px; padding:0.6rem;" onclick="hostOnlineRoom()">Host Battle Room</button>
+          <button class="btn-outline" style="flex:1; justify-content:center; font-size:13px; padding:0.6rem;" onclick="showJoinInput()">Join Battle Room</button>
+        </div>
+        
+        <div id="join-input-row" style="display:none; flex-direction:column; gap:8px; margin-top:0.25rem;">
+          <label style="font-size:11px; font-weight:600; text-transform:uppercase; color:var(--text-secondary);">Room Code</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="join-room-code" class="username-input" placeholder="Enter 4-Digit Code (e.g. 4821)" maxlength="6" style="text-transform:uppercase;">
+            <button class="btn-primary" style="font-size:13px; padding:0.6rem 1.2rem;" onclick="joinOnlineRoom()">Connect</button>
+          </div>
+        </div>
+      </div>
+      
+      <div id="online-connected-view" style="display:none; flex-direction:column; gap:10px;">
+        <div style="font-size:13px; font-weight:500; text-align:center; padding:0.25rem;" id="online-connection-msg">
+          Connected to opponent!
+        </div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:0.25rem;" id="online-lobby-vs">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
     </div>
 
-    <div class="topics-grid" id="topics-grid"></div>
+    <!-- DAILY CHALLENGE LOBBY CARD -->
+    <div id="daily-lobby-card" style="display:none; background: linear-gradient(135deg, var(--purple-light), var(--coral-light)); border: 2px solid var(--purple); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(83, 74, 183, 0.08); position: relative; overflow: hidden; text-align: center;">
+      <div class="daily-floating-emoji" style="bottom:-25px; right:-15px;">🔥</div>
+      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-dark); background: rgba(83, 74, 183, 0.15); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 1rem; position: relative; z-index: 2;">
+        📅 Today's Challenge Match
+      </div>
+      <h2 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; position: relative; z-index: 2;" id="daily-lobby-title">AI Quiz Challenge</h2>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; max-width: 440px; margin: 0 auto 1.25rem; position: relative; z-index: 2;">
+        You are playing today's seeded battle. 5 unique questions, pre-determined difficulty, and <strong>only 1 attempt allowed today</strong>!
+      </p>
+      
+      <div style="display:flex; justify-content:center; gap:20px; background:rgba(255,255,255,0.7); border-radius:var(--radius); padding:0.8rem; border:1px solid var(--border); font-size:13px; font-weight:600; max-width:360px; margin:0 auto 1.5rem; position: relative; z-index: 2;" id="daily-lobby-details">
+        <span>Category: <strong style="color:var(--purple);">Programming</strong></span>
+        <span style="color:var(--border-md);">|</span>
+        <span>Difficulty: <strong style="color:var(--amber);">🟢 Easy</strong></span>
+      </div>
 
-    <div class="section-label">Difficulty</div>
-    <div class="difficulty-row" id="diff-row">
-      <button class="diff-btn selected" data-diff="easy" onclick="selectDiff('easy')">🟢 Easy<br><span style="font-size:11px;font-weight:400;">30s per Q</span></button>
-      <button class="diff-btn" data-diff="medium" onclick="selectDiff('medium')">🟡 Medium<br><span style="font-size:11px;font-weight:400;">20s per Q</span></button>
-      <button class="diff-btn" data-diff="hard" onclick="selectDiff('hard')">🔴 Hard<br><span style="font-size:11px;font-weight:400;">10s per Q</span></button>
+      <div style="position: relative; z-index: 2;">
+        <button class="btn-primary" style="padding:0.9rem 2.2rem; font-size:16px; margin:0 auto; display:inline-flex; justify-content:center; gap:8px;" onclick="startDailyQuiz()">
+          Start Seeded Challenge 🔥
+        </button>
+      </div>
     </div>
 
-    <div class="start-row">
-      <span class="hint-text" id="select-hint">Select a topic to begin</span>
-      <button class="btn-primary" id="start-btn" disabled onclick="startQuiz()">Start Quiz →</button>
+    <div id="standard-lobby-suite">
+      <div class="section-label">Category</div>
+      <div class="category-tabs">
+        <button class="cat-tab active" onclick="filterCategory('all', this)">All Topics</button>
+        <button class="cat-tab" onclick="filterCategory('general', this)">General</button>
+        <button class="cat-tab" onclick="filterCategory('programming', this)">Programming</button>
+      </div>
+
+      <div class="topics-grid" id="topics-grid"></div>
+
+      <div class="section-label">Difficulty</div>
+      <div class="difficulty-row" id="diff-row">
+        <button class="diff-btn selected" data-diff="easy" onclick="selectDiff('easy')">🟢 Easy<br><span style="font-size:11px;font-weight:400;">30s per Q</span></button>
+        <button class="diff-btn" data-diff="medium" onclick="selectDiff('medium')">🟡 Medium<br><span style="font-size:11px;font-weight:400;">20s per Q</span></button>
+        <button class="diff-btn" data-diff="hard" onclick="selectDiff('hard')">🔴 Hard<br><span style="font-size:11px;font-weight:400;">10s per Q</span></button>
+      </div>
+
+      <div class="start-row">
+        <span class="hint-text" id="select-hint">Select a topic to begin</span>
+        <button class="btn-primary" id="start-btn" disabled onclick="startQuiz()">Start Quiz →</button>
+      </div>
     </div>
   </div>
 
   <!-- QUIZ GAMEPLAY SCREEN -->
   <div id="quiz-screen" class="screen">
-    <div style="padding-top:1.5rem;">
-      <div class="quiz-top">
-        <span class="topic-badge" id="quiz-badge">Quiz</span>
-        <div class="timer-wrap">
-          <div class="timer-ring-wrap">
-            <svg viewBox="0 0 42 42">
-              <circle class="timer-ring-bg" cx="21" cy="21" r="18"/>
-              <circle class="timer-ring-fg" id="timer-ring" cx="21" cy="21" r="18"
-                stroke-dasharray="113.1" stroke-dashoffset="0" stroke="var(--purple)"/>
-            </svg>
-            <div class="timer-num" id="timer-num">30</div>
-          </div>
-          <span style="font-size:12px;color:var(--text-secondary);" id="q-counter">1/5</span>
-        </div>
-      </div>
-      <div class="progress-bar-wrap">
-        <div class="progress-bar" id="progress-bar" style="width:20%"></div>
-      </div>
-      <div class="q-label" id="q-label">Question 1 of 5</div>
-      <div class="q-text" id="q-text"></div>
-      <div class="options" id="options"></div>
-      <div class="feedback-bar" id="feedback" style="display:none;"></div>
-      <div class="quiz-footer">
-        <button class="btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()">Next →</button>
-      </div>
+    <div style="padding-top:1.5rem;" id="quiz-arena-container">
+      <!-- Generated dynamically based on Solo vs Multiplayer mode -->
     </div>
   </div>
 
@@ -339,10 +377,44 @@ let currentStreak = 0, maxStreak = 0;
 let currentPlayerName = '';
 let currentPlayerAvatar = '🚀';
 
-function filterCategory(cat) {
+// ── MULTIPLAYER STATE VARIABLES ──
+let isMultiplayer = false;
+let p1Name = '', p1Avatar = '', p2Name = '', p2Avatar = '';
+let p1Score = 0, p2Score = 0;
+let p1Streak = 0, p1MaxStreak = 0;
+let p2Streak = 0, p2MaxStreak = 0;
+let p1Answered = false, p2Answered = false;
+let p1SelectedIdx = -1, p2SelectedIdx = -1;
+let p1TimeUsed = 0, p2TimeUsed = 0;
+let originalResultWrapHTML = '';
+
+// ── ONLINE WEBRTC VARIABLES ──
+let peer = null;
+let dataConn = null;
+let isHost = false;
+let onlineRoomId = '';
+
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
+function filterCategory(cat, btn) {
   activeCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+  } else if (typeof event !== 'undefined' && event && event.target) {
+    event.target.classList.add('active');
+  }
 
   if (selectedTopic) {
     const t = TOPICS.find(t => t.id === selectedTopic);
@@ -353,6 +425,7 @@ function filterCategory(cat) {
     }
   }
   renderTopics();
+  syncLobbyState();
 }
 
 function renderTopics() {
@@ -360,11 +433,14 @@ function renderTopics() {
   const visible = activeCategory === 'all' ? TOPICS : TOPICS.filter(t => t.category === activeCategory);
   grid.innerHTML = visible.map(t => `
     <div class="topic-card ${selectedTopic === t.id ? 'selected' : ''}" id="tc-${t.id}" onclick="selectTopic('${t.id}')">
-      <div class="topic-icon-wrap">${t.icon}</div>
-      <div class="topic-name">${t.name}</div>
+      <div class="topic-name" style="margin-top: 4px;">${t.name}</div>
       <div class="topic-meta">5 questions</div>
       <span class="topic-tag tag-${t.category}">${t.category === 'programming' ? '💻 Programming' : '🌐 General'}</span>
     </div>`).join('');
+    
+  if (isMultiplayer && dataConn && !isHost) {
+    lockLobbyForGuest();
+  }
 }
 
 function selectTopic(id) {
@@ -372,14 +448,22 @@ function selectTopic(id) {
   document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
   const el = document.getElementById('tc-' + id);
   if (el) el.classList.add('selected');
-  document.getElementById('start-btn').disabled = false;
-  document.getElementById('select-hint').textContent = TOPICS.find(t => t.id === id).name + ' selected ✓';
+  
+  const startBtn = document.getElementById('start-btn');
+  if (startBtn) startBtn.disabled = false;
+  
+  const hint = document.getElementById('select-hint');
+  if (hint) hint.textContent = TOPICS.find(t => t.id === id).name + ' selected ✓';
+  
+  syncLobbyState();
 }
-
 function selectDiff(d) {
   selectedDiff = d;
   document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
-  document.querySelector(`[data-diff="${d}"]`).classList.add('selected');
+  const btn = document.querySelector(`[data-diff="${d}"]`);
+  if (btn) btn.classList.add('selected');
+  
+  syncLobbyState();
 }
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
@@ -389,6 +473,23 @@ function startQuiz() {
   questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
   current = 0; score = 0; totalTimeUsed = 0; answered = false;
   currentStreak = 0; maxStreak = 0;
+
+  p1Score = 0; p2Score = 0;
+  p1Streak = 0; p1MaxStreak = 0;
+  p2Streak = 0; p2MaxStreak = 0;
+  p1TimeUsed = 0; p2TimeUsed = 0;
+  p1Answered = false; p2Answered = false;
+  p1SelectedIdx = -1; p2SelectedIdx = -1;
+
+  if (isMultiplayer && dataConn && isHost) {
+    dataConn.send({
+      type: 'start',
+      questions: questions,
+      topic: selectedTopic,
+      diff: selectedDiff
+    });
+  }
+
   showScreen('quiz-screen');
   renderQuestion();
 }
@@ -405,20 +506,45 @@ function renderQuestion() {
   const total = DIFF_TIME[selectedDiff];
   const t = TOPICS.find(t => t.id === selectedTopic);
 
-  document.getElementById('quiz-badge').textContent = t.name;
-  document.getElementById('q-counter').textContent = `${current + 1}/5`;
-  document.getElementById('q-label').textContent = `Question ${current + 1} of 5`;
-  document.getElementById('q-text').textContent = q.q;
-  document.getElementById('progress-bar').style.width = ((current + 1) / 5 * 100) + '%';
-  document.getElementById('feedback').style.display = 'none';
-  document.getElementById('next-btn').style.display = 'none';
+  if (isMultiplayer) {
+    renderMultiplayerQuestion(q, total, t);
+    return;
+  }
 
-  const optDiv = document.getElementById('options');
-  optDiv.innerHTML = q.opts.map((o, i) => `
-    <button class="option-btn" id="opt-${i}" onclick="selectAnswer(${i})">
-      <span class="opt-letter">${LETTERS[i]}</span>
-      <span>${o}</span>
-    </button>`).join('');
+  const container = document.getElementById('quiz-arena-container');
+  container.innerHTML = `
+    <div class="quiz-top">
+      <span class="topic-badge" id="quiz-badge">${t.name}</span>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="q-counter" style="font-size:13px; font-weight:600; color:var(--text-secondary);">${current + 1}/5</span>
+        <div class="timer-wrap">
+          <div class="timer-ring-wrap">
+            <svg width="42" height="42">
+              <circle class="timer-ring-bg" cx="21" cy="21" r="18"></circle>
+              <circle class="timer-ring-fg" id="timer-ring" cx="21" cy="21" r="18" stroke-dasharray="113.097" stroke-dashoffset="0"></circle>
+            </svg>
+            <div class="timer-num" id="timer-num">${total}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progress-bar" style="width: ${((current + 1) / 5 * 100)}%;"></div>
+    </div>
+    <div class="q-label" id="q-label">Question ${current + 1} of 5</div>
+    <div class="q-text" id="q-text">${q.q}</div>
+    <div class="options" id="options">
+      ${q.opts.map((o, i) => `
+        <button class="option-btn" id="opt-${i}" onclick="selectAnswer(${i})">
+          <span class="opt-letter">${LETTERS[i]}</span>
+          <span>${escapeHTML(o)}</span>
+        </button>`).join('')}
+    </div>
+    <div class="feedback-bar" id="feedback" style="display:none;"></div>
+    <div class="quiz-footer">
+      <button class="btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()"></button>
+    </div>
+  `;
 
   timeLeft = total;
   updateTimer(timeLeft, total);
@@ -429,10 +555,134 @@ function renderQuestion() {
   }, 1000);
 }
 
+function renderMultiplayerQuestion(q, total, t) {
+  p1Answered = false;
+  p2Answered = false;
+  p1SelectedIdx = -1;
+  p2SelectedIdx = -1;
+
+  const container = document.getElementById('quiz-arena-container');
+  
+  const totalScore = p1Score + p2Score;
+  let p1Width = 50, p2Width = 50;
+  if (totalScore > 0) {
+    p1Width = (p1Score / totalScore) * 100;
+    p2Width = (p2Score / totalScore) * 100;
+  }
+
+  let p1WinnerClass = '';
+  let p2WinnerClass = '';
+  if (p1Score > p2Score) p1WinnerClass = 'active-winner';
+  else if (p2Score > p1Score) p2WinnerClass = 'active-winner';
+
+  const isGuest = dataConn && !isHost;
+
+  container.innerHTML = `
+    <div class="quiz-top">
+      <span class="topic-badge" id="quiz-badge">${t.name}</span>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="q-counter" style="font-size:13px; font-weight:600; color:var(--text-secondary);">${current + 1}/5</span>
+        <div class="timer-wrap">
+          <div class="timer-ring-wrap">
+            <svg width="42" height="42">
+              <circle class="timer-ring-bg" cx="21" cy="21" r="18"></circle>
+              <circle class="timer-ring-fg" id="timer-ring" cx="21" cy="21" r="18" stroke-dasharray="113.097" stroke-dashoffset="0"></circle>
+            </svg>
+            <div class="timer-num" id="timer-num">${total}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progress-bar" style="width: ${((current + 1) / 5 * 100)}%;"></div>
+    </div>
+    
+    <div class="q-label" style="text-align: center;">⚔️ Battle Question ${current + 1} of 5</div>
+    <div class="q-text" style="text-align: center; font-size: 20px; line-height: 1.45; margin-bottom: 2rem;">${q.q}</div>
+
+    <div class="battle-arena">
+      <div class="player-column p1-side ${p1WinnerClass}" id="p1-column">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem; border-bottom: 1.5px solid var(--border); padding-bottom:0.5rem;">
+          <span style="font-size:20px;">${p1Avatar}</span>
+          <div style="flex:1;">
+            <div style="font-size:12px; font-weight:700; color:var(--purple);">${p1Name}</div>
+            <div style="font-size:10px; color:var(--text-secondary);">Score: <strong style="font-size:11px;color:var(--text);">${p1Score}</strong> | Streak: 🔥${p1Streak}</div>
+          </div>
+        </div>
+        
+        <div class="option-grid-compact" id="p1-options">
+          ${q.opts.map((o, i) => `
+            <button class="option-btn-compact" id="p1-opt-${i}" onclick="selectMultiplayerAnswer(1, ${i})" ${isGuest ? 'disabled style="cursor:default;"' : ''}>
+              <span class="opt-letter">${LETTERS[i]}</span>
+              <span style="flex:1;">${escapeHTML(o)}</span>
+              <span class="key-badge">${dataConn ? ['1','2','3','4'][i] : ['Q','W','E','R'][i]}</span>
+            </button>
+          `).join('')}
+        </div>
+        
+        <div class="locked-overlay" id="p1-locked-overlay" style="display:none;">
+          <span style="font-size:24px;">🔒</span>
+          <span>Locked In</span>
+        </div>
+      </div>
+
+      <div class="player-column p2-side ${p2WinnerClass}" id="p2-column">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:1rem; border-bottom: 1.5px solid var(--border); padding-bottom:0.5rem;">
+          <span style="font-size:20px;">${p2Avatar}</span>
+          <div style="flex:1;">
+            <div style="font-size:12px; font-weight:700; color:var(--coral);">${p2Name}</div>
+            <div style="font-size:10px; color:var(--text-secondary);">Score: <strong style="font-size:11px;color:var(--text);">${p2Score}</strong> | Streak: 🔥${p2Streak}</div>
+          </div>
+        </div>
+        
+        <div class="option-grid-compact" id="p2-options">
+          ${q.opts.map((o, i) => `
+            <button class="option-btn-compact" id="p2-opt-${i}" onclick="selectMultiplayerAnswer(2, ${i})" ${(!isGuest && dataConn) ? 'disabled style="cursor:default;"' : ''}>
+              <span class="opt-letter">${LETTERS[i]}</span>
+              <span style="flex:1;">${escapeHTML(o)}</span>
+              <span class="key-badge">${dataConn ? ['1','2','3','4'][i] : ['U','I','O','P'][i]}</span>
+            </button>
+          `).join('')}
+        </div>
+        
+        <div class="locked-overlay" id="p2-locked-overlay" style="display:none;">
+          <span style="font-size:24px;">🔒</span>
+          <span>Locked In</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="battle-bar-wrap">
+      <div class="battle-bar-p1" id="battle-bar-p1" style="width: ${p1Width}%;"></div>
+      <div class="battle-bar-p2" id="battle-bar-p2" style="width: ${p2Width}%;"></div>
+    </div>
+    <div style="text-align:center; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:1.5rem;">
+      ⚔️ Tug-of-War Score Balance ⚔️
+    </div>
+
+    <div class="feedback-bar" id="feedback" style="display:none; text-align: center;"></div>
+    <div class="quiz-footer" style="justify-content: center;">
+      <button class="btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()"></button>
+    </div>
+  `;
+
+  timeLeft = total;
+  updateTimer(timeLeft, total);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer(timeLeft, total);
+    if (timeLeft <= 0) { 
+      clearInterval(timerInterval); 
+      onMultiplayerTimeout(); 
+    }
+  }, 1000);
+}
+
 function updateTimer(t, total) {
   const offset = CIRCUMFERENCE * (1 - t / total);
   const ring = document.getElementById('timer-ring');
   const numEl = document.getElementById('timer-num');
+  if (!ring || !numEl) return;
   ring.style.strokeDashoffset = offset;
   numEl.textContent = t;
   if (t <= 5) { ring.style.stroke = '#E24B4A'; numEl.classList.add('urgent'); }
@@ -445,11 +695,14 @@ function onTimeout() {
   currentStreak = 0;
   const q = questions[current];
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-  document.getElementById('opt-' + q.ans).classList.add('correct');
+  const correctOpt = document.getElementById('opt-' + q.ans);
+  if (correctOpt) correctOpt.classList.add('correct');
   const fb = document.getElementById('feedback');
-  fb.className = 'feedback-bar timeout';
-  fb.textContent = `⏰ Time's up! The answer was: ${q.opts[q.ans]}`;
-  fb.style.display = 'block';
+  if (fb) {
+    fb.className = 'feedback-bar timeout';
+    fb.textContent = `⏰ Time's up! The answer was: ${q.opts[q.ans]}`;
+    fb.style.display = 'block';
+  }
   totalTimeUsed += DIFF_TIME[selectedDiff];
   showNextBtn();
 }
@@ -464,30 +717,248 @@ function selectAnswer(idx) {
   const chosen = document.getElementById('opt-' + idx);
   const fb = document.getElementById('feedback');
   if (idx === q.ans) {
-    chosen.classList.add('correct', 'pop');
+    if (chosen) chosen.classList.add('correct', 'pop');
     score++;
     currentStreak++;
     maxStreak = Math.max(maxStreak, currentStreak);
-    fb.className = 'feedback-bar correct';
-    fb.textContent = '✓ Correct!';
+    if (fb) {
+      fb.className = 'feedback-bar correct';
+      fb.textContent = '✓ Correct!';
+    }
   } else {
-    chosen.classList.add('wrong', 'shake');
-    document.getElementById('opt-' + q.ans).classList.add('correct');
+    if (chosen) chosen.classList.add('wrong', 'shake');
+    const correctOpt = document.getElementById('opt-' + q.ans);
+    if (correctOpt) correctOpt.classList.add('correct');
     currentStreak = 0;
-    fb.className = 'feedback-bar wrong';
-    fb.textContent = `✗ Incorrect. The answer was: ${q.opts[q.ans]}`;
+    if (fb) {
+      fb.className = 'feedback-bar wrong';
+      fb.textContent = `✗ Incorrect. The answer was: ${q.opts[q.ans]}`;
+    }
   }
-  fb.style.display = 'block';
+  if (fb) fb.style.display = 'block';
   showNextBtn();
 }
 
+function selectMultiplayerAnswer(playerNum, idx) {
+  if (answered) return;
+
+  if (dataConn) {
+    if (isHost && playerNum !== 1) return;
+    if (!isHost && playerNum !== 2) return;
+  }
+
+  if (playerNum === 1) {
+    if (p1Answered) return;
+    p1SelectedIdx = idx;
+    p1Answered = true;
+    const overlay = document.getElementById('p1-locked-overlay');
+    if (overlay) overlay.style.display = 'flex';
+  } else {
+    if (p2Answered) return;
+    p2SelectedIdx = idx;
+    p2Answered = true;
+    const overlay = document.getElementById('p2-locked-overlay');
+    if (overlay) overlay.style.display = 'flex';
+  }
+
+  if (dataConn) {
+    dataConn.send({
+      type: 'answer',
+      playerNum: playerNum,
+      idx: idx
+    });
+  }
+
+  if (p1Answered && p2Answered) {
+    clearInterval(timerInterval);
+    const elapsed = DIFF_TIME[selectedDiff] - timeLeft;
+    p1TimeUsed += elapsed;
+    p2TimeUsed += elapsed;
+    totalTimeUsed += elapsed;
+    evaluateMultiplayerAnswers();
+  }
+}
+
+function onMultiplayerTimeout() {
+  p1Answered = true;
+  p2Answered = true;
+  const elapsed = DIFF_TIME[selectedDiff];
+  p1TimeUsed += elapsed;
+  p2TimeUsed += elapsed;
+  totalTimeUsed += elapsed;
+  evaluateMultiplayerAnswers();
+}
+
+function evaluateMultiplayerAnswers() {
+  answered = true;
+  const q = questions[current];
+
+  document.querySelectorAll('.option-btn-compact').forEach(btn => btn.disabled = true);
+
+  const o1 = document.getElementById('p1-locked-overlay');
+  const o2 = document.getElementById('p2-locked-overlay');
+  if (o1) o1.style.display = 'none';
+  if (o2) o2.style.display = 'none';
+
+  q.opts.forEach((o, i) => {
+    const btn = document.getElementById(`p1-opt-${i}`);
+    if (!btn) return;
+    if (i === q.ans) btn.classList.add('correct');
+    if (p1SelectedIdx === i) {
+      if (i === q.ans) btn.classList.add('pop');
+      else btn.classList.add('wrong', 'shake');
+    }
+  });
+
+  q.opts.forEach((o, i) => {
+    const btn = document.getElementById(`p2-opt-${i}`);
+    if (!btn) return;
+    if (i === q.ans) btn.classList.add('correct');
+    if (p2SelectedIdx === i) {
+      if (i === q.ans) btn.classList.add('pop');
+      else btn.classList.add('wrong', 'shake');
+    }
+  });
+
+  const p1Correct = (p1SelectedIdx === q.ans);
+  const p2Correct = (p2SelectedIdx === q.ans);
+
+  if (p1Correct) {
+    p1Score++;
+    p1Streak++;
+    p1MaxStreak = Math.max(p1MaxStreak, p1Streak);
+  } else {
+    p1Streak = 0;
+  }
+
+  if (p2Correct) {
+    p2Score++;
+    p2Streak++;
+    p2MaxStreak = Math.max(p2MaxStreak, p2Streak);
+  } else {
+    p2Streak = 0;
+  }
+
+  const totalScore = p1Score + p2Score;
+  let p1Width = 50, p2Width = 50;
+  if (totalScore > 0) {
+    p1Width = (p1Score / totalScore) * 100;
+    p2Width = (p2Score / totalScore) * 100;
+  }
+
+  const b1 = document.getElementById('battle-bar-p1');
+  const b2 = document.getElementById('battle-bar-p2');
+  if (b1) b1.style.width = p1Width + '%';
+  if (b2) b2.style.width = p2Width + '%';
+
+  const col1 = document.getElementById('p1-column');
+  const col2 = document.getElementById('p2-column');
+  if (col1 && col2) {
+    col1.classList.remove('active-winner');
+    col2.classList.remove('active-winner');
+    if (p1Score > p2Score) col1.classList.add('active-winner');
+    else if (p2Score > p1Score) col2.classList.add('active-winner');
+  }
+
+  const p1Header = document.querySelector('.p1-side div[style*="font-size:10px"]');
+  if (p1Header) {
+    p1Header.innerHTML = `Score: <strong style="font-size:11px;color:var(--text);">${p1Score}</strong> | Streak: 🔥${p1Streak}`;
+  }
+
+  const p2Header = document.querySelector('.p2-side div[style*="font-size:10px"]');
+  if (p2Header) {
+    p2Header.innerHTML = `Score: <strong style="font-size:11px;color:var(--text);">${p2Score}</strong> | Streak: 🔥${p2Streak}`;
+  }
+
+  const fb = document.getElementById('feedback');
+  if (fb) {
+    fb.style.display = 'block';
+    let msg = '';
+    if (p1Correct && p2Correct) {
+      fb.className = 'feedback-bar correct';
+      msg = `⚡ Both got it right! The answer was: ${q.opts[q.ans]}`;
+    } else if (p1Correct) {
+      fb.className = 'feedback-bar correct';
+      msg = `🚀 ${p1Name} got it right! ${p2Name} missed it.`;
+    } else if (p2Correct) {
+      fb.className = 'feedback-bar correct';
+      msg = `🦊 ${p2Name} got it right! ${p1Name} missed it.`;
+    } else {
+      if (p1SelectedIdx === -1 && p2SelectedIdx === -1) {
+        fb.className = 'feedback-bar timeout';
+        msg = `⏰ Time's up! Neither player answered in time. The answer was: ${q.opts[q.ans]}`;
+      } else {
+        fb.className = 'feedback-bar wrong';
+        msg = `✗ Both got it wrong! The answer was: ${q.opts[q.ans]}`;
+      }
+    }
+    fb.textContent = msg;
+  }
+
+  showNextBtn();
+}
+
+function handleKeyDown(e) {
+  if (!isMultiplayer) return;
+  if (answered) return;
+
+  const key = e.key.toLowerCase();
+  
+  if (dataConn) {
+    if (isHost) {
+      if (!p1Answered) {
+        if (key === 'q' || key === '1') selectMultiplayerAnswer(1, 0);
+        else if (key === 'w' || key === '2') selectMultiplayerAnswer(1, 1);
+        else if (key === 'e' || key === '3') selectMultiplayerAnswer(1, 2);
+        else if (key === 'r' || key === '4') selectMultiplayerAnswer(1, 3);
+      }
+    } else {
+      if (!p2Answered) {
+        if (key === 'u' || key === '1') selectMultiplayerAnswer(2, 0);
+        else if (key === 'i' || key === '2') selectMultiplayerAnswer(2, 1);
+        else if (key === 'o' || key === '3') selectMultiplayerAnswer(2, 2);
+        else if (key === 'p' || key === '4') selectMultiplayerAnswer(2, 3);
+      }
+    }
+  } else {
+    if (!p1Answered) {
+      if (key === 'q') selectMultiplayerAnswer(1, 0);
+      else if (key === 'w') selectMultiplayerAnswer(1, 1);
+      else if (key === 'e') selectMultiplayerAnswer(1, 2);
+      else if (key === 'r') selectMultiplayerAnswer(1, 3);
+    }
+    if (!p2Answered) {
+      if (key === 'u') selectMultiplayerAnswer(2, 0);
+      else if (key === 'i') selectMultiplayerAnswer(2, 1);
+      else if (key === 'o') selectMultiplayerAnswer(2, 2);
+      else if (key === 'p') selectMultiplayerAnswer(2, 3);
+    }
+  }
+}
+
+window.addEventListener('keydown', handleKeyDown);
+
 function showNextBtn() {
   const nb = document.getElementById('next-btn');
-  nb.style.display = 'inline-flex';
-  nb.textContent = current < questions.length - 1 ? 'Next →' : 'See Results →';
+  if (nb) {
+    nb.style.display = 'inline-flex';
+    if (dataConn && !isHost) {
+      nb.textContent = 'Waiting for Host...';
+      nb.disabled = true;
+    } else {
+      nb.textContent = current < questions.length - 1 ? 'Next →' : 'See Results →';
+      nb.disabled = false;
+    }
+  }
 }
 
 function nextQuestion() {
+  if (dataConn && isHost) {
+    dataConn.send({
+      type: 'next'
+    });
+  }
+
   current++;
   if (current < questions.length) renderQuestion();
   else showResults();
@@ -497,40 +968,175 @@ function showResults() {
   clearInterval(timerInterval);
   showScreen('result-screen');
   const t = TOPICS.find(t => t.id === selectedTopic);
+
+  if (isMultiplayer) {
+    showMultiplayerResults(t);
+    return;
+  }
+
+  const resultWrap = document.querySelector('.result-wrap');
+  if (resultWrap && originalResultWrapHTML) {
+    resultWrap.innerHTML = originalResultWrapHTML;
+  }
+
   const wrong = questions.length - score;
   const pct = Math.round(score / questions.length * 100);
   const avgTime = Math.round(totalTimeUsed / questions.length);
   const tier = score === 5 ? 4 : score >= 4 ? 3 : score >= 3 ? 2 : score >= 2 ? 1 : 0;
   const emojis = ['😅','🤔','😊','🎉','🏆'];
   const msgs = ['Keep practising!','Not bad, keep going!','Solid effort!','Great job!','Perfect score!'];
-  document.getElementById('result-emoji').textContent = emojis[tier];
-  document.getElementById('result-score').textContent = `${score}/5`;
-  document.getElementById('result-topic').textContent = `${t.name} · ${selectedDiff.charAt(0).toUpperCase() + selectedDiff.slice(1)}`;
-  document.getElementById('result-msg').textContent = msgs[tier];
-  document.getElementById('s-correct').textContent = score;
-  document.getElementById('s-wrong').textContent = wrong;
-  document.getElementById('s-time').textContent = avgTime + 's';
-  document.getElementById('s-pct').textContent = pct + '%';
+  
+  const emojiEl = document.getElementById('result-emoji');
+  if (emojiEl) emojiEl.textContent = emojis[tier];
+  
+  const scoreEl = document.getElementById('result-score');
+  if (scoreEl) scoreEl.textContent = `${score}/5`;
+  
+  const topicEl = document.getElementById('result-topic');
+  if (topicEl) topicEl.textContent = `${t.name} · ${selectedDiff.charAt(0).toUpperCase() + selectedDiff.slice(1)}`;
+  
+  const msgEl = document.getElementById('result-msg');
+  if (msgEl) msgEl.textContent = msgs[tier];
+  
+  const correctEl = document.getElementById('s-correct');
+  if (correctEl) correctEl.textContent = score;
+  
+  const wrongEl = document.getElementById('s-wrong');
+  if (wrongEl) wrongEl.textContent = wrong;
+  
+  const timeEl = document.getElementById('s-time');
+  if (timeEl) timeEl.textContent = avgTime + 's';
+  
+  const pctEl = document.getElementById('s-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
 
-  // Populate auto-save message and perform submission
   const savePanel = document.getElementById('save-score-panel');
   if (savePanel) {
     savePanel.style.display = 'block';
-    const msgEl = document.getElementById('auto-save-message');
-    if (msgEl) {
-      msgEl.textContent = `Your results have been automatically posted to the leaderboard under the profile: ${currentPlayerAvatar} ${currentPlayerName}`;
+    const autoSaveMsg = document.getElementById('auto-save-message');
+    if (autoSaveMsg) {
+      autoSaveMsg.textContent = `Your results have been automatically posted to the leaderboard under the profile: ${currentPlayerAvatar} ${currentPlayerName}`;
     }
+  }
+
+  const activeSession = JSON.parse(localStorage.getItem('quizbrain_current_player')) || {};
+  if (activeSession.mode === 'daily') {
+    const actions = document.querySelector('.result-actions');
+    if (actions) {
+      actions.innerHTML = `
+        <button class="btn-outline" onclick="goHome()" style="flex:1;">🏠 Standings</button>
+        <button class="btn-primary" style="background: linear-gradient(135deg, var(--purple), var(--coral)); color: #fff; flex:1.2; justify-content:center; gap:6px;" onclick="copyDailyResultsToClipboard()">📋 Share Score</button>
+      `;
+    }
+    
+    const saveTitle = savePanel ? savePanel.querySelector('h3') : null;
+    if (saveTitle) saveTitle.innerHTML = `<span class="badge-daily" style="margin-right:6px;">Daily Challenge</span> Saved!`;
+    
+    const attempts = JSON.parse(localStorage.getItem('quizbrain_daily_attempts')) || {};
+    const todayStr = getLocalDateString();
+    attempts[todayStr] = {
+      score: score,
+      maxStreak: maxStreak,
+      totalTime: totalTimeUsed,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('quizbrain_daily_attempts', JSON.stringify(attempts));
   }
 
   saveScore(currentPlayerName, currentPlayerAvatar, score, maxStreak, totalTimeUsed);
 }
 
+function showMultiplayerResults(t) {
+  const resultWrap = document.querySelector('.result-wrap');
+  if (!resultWrap) return;
+
+  let emoji = '🤝';
+  let title = "It's a Tie!";
+  if (p1Score > p2Score) {
+    emoji = '🏆';
+    title = `${p1Name} Wins!`;
+  } else if (p2Score > p1Score) {
+    emoji = '🏆';
+    title = `${p2Name} Wins!`;
+  }
+
+  let actionButtons = '';
+  if (dataConn && !isHost) {
+    actionButtons = `
+      <button class="btn-outline" onclick="goHome()">🏠 Selection</button>
+      <button class="btn-primary" id="rematch-btn" disabled>Waiting for Host...</button>
+    `;
+  } else {
+    actionButtons = `
+      <button class="btn-outline" onclick="goHome()">🏠 Selection</button>
+      <button class="btn-primary" id="rematch-btn" onclick="retryQuiz()">↺ Rematch</button>
+    `;
+  }
+
+  resultWrap.innerHTML = `
+    <div class="result-emoji">${emoji}</div>
+    <div class="result-score" style="font-size: 40px; margin-bottom: 0.5rem;">
+      <span style="color:var(--purple);">${p1Score}</span>
+      <span style="color:var(--text-secondary); font-size: 28px; margin: 0 12px;">vs</span>
+      <span style="color:var(--coral);">${p2Score}</span>
+    </div>
+    <div class="result-msg" style="font-size: 22px; font-weight:700; margin-bottom: 0.25rem;">${title}</div>
+    <div class="result-topic" style="margin-bottom: 2rem;">${t.name} · ${selectedDiff.charAt(0).toUpperCase() + selectedDiff.slice(1)}</div>
+    
+    <div style="background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; max-width: 460px; margin: 0 auto 2rem; font-size: 13px; text-align: left; box-shadow: 0 8px 30px rgba(0,0,0,0.02);">
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: var(--bg); border-bottom: 1.5px solid var(--border);">
+            <th style="padding: 12px 16px; font-weight:600; color:var(--text-secondary);">Stat</th>
+            <th style="padding: 12px 16px; font-weight:600; color:var(--purple); text-align: center;">${p1Avatar} ${p1Name}</th>
+            <th style="padding: 12px 16px; font-weight:600; color:var(--coral); text-align: center;">${p2Avatar} ${p2Name}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 12px 16px; font-weight:600;">Final Score</td>
+            <td style="padding: 12px 16px; text-align: center; font-weight: 700; color:var(--purple);">${p1Score}/5</td>
+            <td style="padding: 12px 16px; text-align: center; font-weight: 700; color:var(--coral);">${p2Score}/5</td>
+          </tr>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 12px 16px; font-weight:600;">Max Streak</td>
+            <td style="padding: 12px 16px; text-align: center; font-weight: 600;">🔥 ${p1MaxStreak}</td>
+            <td style="padding: 12px 16px; text-align: center; font-weight: 600;">🔥 ${p2MaxStreak}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 16px; font-weight:600;">Total Time</td>
+            <td style="padding: 12px 16px; text-align: center; font-family:'DM Mono',monospace;">${p1TimeUsed}s</td>
+            <td style="padding: 12px 16px; text-align: center; font-family:'DM Mono',monospace;">${p2TimeUsed}s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="save-score-card" style="text-align: center; background: var(--green-light); border-color: var(--green); color: var(--green); margin-bottom: 2rem; max-width: 460px;">
+      <div style="font-size: 28px; margin-bottom: 0.5rem;">🎉</div>
+      <h3 style="color: var(--green); margin-bottom: 0.25rem;">Scores Automatically Saved!</h3>
+      <p style="color: var(--green); font-size: 13px; margin-bottom: 0.5rem; line-height: 1.45;">
+        Both players' statistics have been updated and stored on the local high-score board.
+      </p>
+      <button class="btn-primary" style="background: var(--green); color: #fff; padding: 0.5rem 1.25rem; font-size: 13px; margin-top: 0.25rem;" onclick="location.href='leaderboard.html'">🏆 View Rankings</button>
+    </div>
+
+    <div class="result-actions">
+      ${actionButtons}
+    </div>
+  `;
+
+  saveScore(p1Name, p1Avatar, p1Score, p1MaxStreak, p1TimeUsed);
+  saveScore(p2Name, p2Avatar, p2Score, p2MaxStreak, p2TimeUsed);
+}
+
 function goHome() { 
   clearInterval(timerInterval); 
   selectedTopic = null;
-  document.getElementById('start-btn').disabled = true;
-  document.getElementById('select-hint').textContent = 'Select a topic to begin';
-  // Clear grids selected state
+  const startBtn = document.getElementById('start-btn');
+  if (startBtn) startBtn.disabled = true;
+  const hintText = document.getElementById('select-hint');
+  if (hintText) hintText.textContent = 'Select a topic to begin';
   document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
   showScreen('home-screen'); 
 }
@@ -538,16 +1144,32 @@ function goHome() {
 function retryQuiz() {
   current = 0; score = 0; totalTimeUsed = 0;
   currentStreak = 0; maxStreak = 0;
+
+  p1Score = 0; p2Score = 0;
+  p1Streak = 0; p1MaxStreak = 0;
+  p2Streak = 0; p2MaxStreak = 0;
+  p1TimeUsed = 0; p2TimeUsed = 0;
+  p1Answered = false; p2Answered = false;
+  p1SelectedIdx = -1; p2SelectedIdx = -1;
+
   questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+
+  if (isMultiplayer && dataConn && isHost) {
+    dataConn.send({
+      type: 'start',
+      questions: questions,
+      topic: selectedTopic,
+      diff: selectedDiff
+    });
+  }
+
   showScreen('quiz-screen');
   renderQuestion();
 }
 
-// ── LEADERBOARD ENGINE ──
 let db = null;
 let firebaseInitialized = false;
 
-// OPTIONAL FIREBASE CONFIGURATION
 const FIREBASE_CONFIG = {
   apiKey: null,
   authDomain: null,
@@ -571,6 +1193,7 @@ function initFirebase() {
 
 function saveScore(username, avatar, score, maxStreak, totalTime) {
   const t = TOPICS.find(t => t.id === selectedTopic);
+  const activeSession = JSON.parse(localStorage.getItem('quizbrain_current_player')) || {};
   const entry = {
     username: username,
     avatar: avatar || '🚀',
@@ -581,7 +1204,8 @@ function saveScore(username, avatar, score, maxStreak, totalTime) {
     score: score,
     maxStreak: maxStreak,
     totalTime: totalTime,
-    timestamp: Date.now()
+    timestamp: Date.now(),
+    isDaily: activeSession.mode === 'daily'
   };
 
   let localLeaderboard = JSON.parse(localStorage.getItem('quizbrain_leaderboard')) || [];
@@ -595,19 +1219,475 @@ function saveScore(username, avatar, score, maxStreak, totalTime) {
   }
 }
 
+function hostOnlineRoom() {
+  const statusBadge = document.getElementById('online-status-badge');
+  if (statusBadge) {
+    statusBadge.textContent = 'CONNECTING...';
+    statusBadge.style.background = 'var(--amber-light)';
+    statusBadge.style.color = 'var(--amber)';
+  }
+  
+  const randCode = Math.floor(1000 + Math.random() * 9000);
+  onlineRoomId = `QB-${randCode}`;
+  
+  peer = new Peer(onlineRoomId);
+  
+  peer.on('open', (id) => {
+    isHost = true;
+    isMultiplayer = true;
+    p1Name = currentPlayerName;
+    p1Avatar = currentPlayerAvatar;
+    
+    if (statusBadge) {
+      statusBadge.textContent = 'HOSTING';
+      statusBadge.style.background = 'var(--purple-light)';
+      statusBadge.style.color = 'var(--purple)';
+    }
+    
+    const setupView = document.getElementById('online-setup-view');
+    const inviteLink = `${location.protocol}//${location.host}${location.pathname}?join=${onlineRoomId}`;
+    
+    if (setupView) {
+      setupView.innerHTML = `
+        <div style="background:var(--bg); border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:0.75rem; text-align:center;">
+          <div style="font-size:10px; text-transform:uppercase; font-weight:600; color:var(--text-secondary); margin-bottom:4px;">Lobby Share Code</div>
+          <div style="font-family:'DM Mono',monospace; font-size:22px; font-weight:700; color:var(--purple); letter-spacing:1px; margin-bottom:0.5rem;">${onlineRoomId}</div>
+          <button class="btn-primary" style="font-size:11px; padding:4px 10px; margin: 0 auto;" onclick="copyInviteLink('${inviteLink}')">📋 Copy Share Link</button>
+        </div>
+        <div style="font-size:11px; text-align:center; color:var(--text-secondary); margin-top:2px;" id="online-wait-msg">
+          ⏳ Waiting for Player 2 to join...
+        </div>
+      `;
+    }
+  });
+
+  peer.on('connection', (conn) => {
+    dataConn = conn;
+    setupConnection();
+  });
+
+  peer.on('error', (err) => {
+    console.error("PeerJS hosting error:", err);
+    alert("Could not start hosting room. Try another code or check connection.");
+    if (statusBadge) {
+      statusBadge.textContent = 'OFFLINE';
+      statusBadge.style.background = 'var(--red-light)';
+      statusBadge.style.color = 'var(--red)';
+    }
+  });
+}
+
+function showJoinInput() {
+  const row = document.getElementById('join-input-row');
+  if (row) row.style.display = 'flex';
+}
+
+function joinOnlineRoom() {
+  const input = document.getElementById('join-room-code');
+  if (!input) return;
+  let code = input.value.trim().toUpperCase();
+  if (!code) return;
+  if (!code.startsWith('QB-')) {
+    code = 'QB-' + code;
+  }
+  connectToRoom(code);
+}
+
+function connectToRoom(code) {
+  const statusBadge = document.getElementById('online-status-badge');
+  if (statusBadge) {
+    statusBadge.textContent = 'CONNECTING...';
+    statusBadge.style.background = 'var(--amber-light)';
+    statusBadge.style.color = 'var(--amber)';
+  }
+  
+  const clientId = `QB-GUEST-${Math.floor(1000 + Math.random() * 9000)}`;
+  peer = new Peer(clientId);
+  
+  peer.on('open', (id) => {
+    dataConn = peer.connect(code);
+    setupConnection();
+  });
+
+  peer.on('error', (err) => {
+    console.error("PeerJS joining error:", err);
+    alert("Could not connect to room. Verify code is correct and host is still waiting.");
+    if (statusBadge) {
+      statusBadge.textContent = 'OFFLINE';
+      statusBadge.style.background = 'var(--red-light)';
+      statusBadge.style.color = 'var(--red)';
+    }
+  });
+}
+
+function setupConnection() {
+  const statusBadge = document.getElementById('online-status-badge');
+  
+  dataConn.on('open', () => {
+    isMultiplayer = true;
+    
+    if (statusBadge) {
+      statusBadge.textContent = 'CONNECTED';
+      statusBadge.style.background = 'var(--green-light)';
+      statusBadge.style.color = 'var(--green)';
+    }
+    
+    const setupView = document.getElementById('online-setup-view');
+    if (setupView) setupView.style.display = 'none';
+    
+    const connectedView = document.getElementById('online-connected-view');
+    if (connectedView) connectedView.style.display = 'flex';
+    
+    dataConn.send({
+      type: 'profile',
+      name: currentPlayerName,
+      avatar: currentPlayerAvatar
+    });
+  });
+
+  dataConn.on('data', (data) => {
+    handleOnlineMessage(data);
+  });
+
+  dataConn.on('close', () => {
+    alert("Connection lost with opponent.");
+    location.reload();
+  });
+}
+
+function copyInviteLink(link) {
+  navigator.clipboard.writeText(link).then(() => {
+    alert("Invite link copied to clipboard! Share it with Player 2.");
+  }).catch(() => {
+    const input = document.createElement('input');
+    input.value = link;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    alert("Invite link copied to clipboard! Share it with Player 2.");
+  });
+}
+
+function syncLobbyState() {
+  if (isMultiplayer && dataConn && isHost) {
+    dataConn.send({
+      type: 'lobby_sync',
+      topicId: selectedTopic,
+      difficulty: selectedDiff
+    });
+  }
+}
+
+function lockLobbyForGuest() {
+  document.querySelectorAll('.topic-card').forEach(c => {
+    c.removeAttribute('onclick');
+    c.style.cursor = 'default';
+  });
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.removeAttribute('onclick');
+    b.style.cursor = 'default';
+  });
+  document.querySelectorAll('.cat-tab').forEach(t => {
+    t.removeAttribute('onclick');
+    t.style.cursor = 'default';
+  });
+  
+  const startBtn = document.getElementById('start-btn');
+  if (startBtn) {
+    startBtn.disabled = true;
+    startBtn.textContent = 'Host Selecting Parameters...';
+  }
+}
+
+function handleOnlineMessage(data) {
+  if (data.type === 'profile') {
+    if (isHost) {
+      p2Name = data.name;
+      p2Avatar = data.avatar;
+      
+      const connMsg = document.getElementById('online-connection-msg');
+      if (connMsg) {
+        connMsg.innerHTML = `Connected to Player 2: <strong style="color:var(--coral);">${p2Avatar} ${p2Name}</strong>!`;
+      }
+      
+      const vsEl = document.getElementById('online-lobby-vs');
+      if (vsEl) {
+        vsEl.innerHTML = `
+          <div style="font-size:13px; font-weight:700; color:var(--purple); background:var(--purple-light); padding:4px 10px; border-radius:10px;">${p1Avatar} ${p1Name}</div>
+          <div style="font-size:12px; font-weight:600; color:var(--text-secondary);">VS</div>
+          <div style="font-size:13px; font-weight:700; color:var(--coral); background:var(--coral-light); padding:4px 10px; border-radius:10px;">${p2Avatar} ${p2Name}</div>
+        `;
+      }
+      
+      const pAvatar = document.getElementById('player-avatar');
+      if (pAvatar) pAvatar.textContent = '⚔️';
+      
+      const pName = document.getElementById('player-name');
+      if (pName) {
+        pName.innerHTML = `<span style="color:var(--purple);">${p1Avatar} ${p1Name}</span> vs <span style="color:var(--coral);">${p2Avatar} ${p2Name}</span>`;
+      }
+      
+      syncLobbyState();
+    } else {
+      p1Name = data.name;
+      p1Avatar = data.avatar;
+      p2Name = currentPlayerName;
+      p2Avatar = currentPlayerAvatar;
+      
+      const connMsg = document.getElementById('online-connection-msg');
+      if (connMsg) {
+        connMsg.innerHTML = `Connected to Host: <strong style="color:var(--purple);">${p1Avatar} ${p1Name}</strong>!`;
+      }
+      
+      const vsEl = document.getElementById('online-lobby-vs');
+      if (vsEl) {
+        vsEl.innerHTML = `
+          <div style="font-size:13px; font-weight:700; color:var(--purple); background:var(--purple-light); padding:4px 10px; border-radius:10px;">${p1Avatar} ${p1Name}</div>
+          <div style="font-size:12px; font-weight:600; color:var(--text-secondary);">VS</div>
+          <div style="font-size:13px; font-weight:700; color:var(--coral); background:var(--coral-light); padding:4px 10px; border-radius:10px;">${p2Avatar} ${p2Name}</div>
+        `;
+      }
+      
+      const pAvatar = document.getElementById('player-avatar');
+      if (pAvatar) pAvatar.textContent = '⚔️';
+      
+      const pName = document.getElementById('player-name');
+      if (pName) {
+        pName.innerHTML = `<span style="color:var(--purple);">${p1Avatar} ${p1Name}</span> vs <span style="color:var(--coral);">${p2Avatar} ${p2Name}</span>`;
+      }
+      
+      lockLobbyForGuest();
+    }
+  } 
+  else if (data.type === 'lobby_sync') {
+    selectedTopic = data.topicId;
+    selectedDiff = data.difficulty;
+    
+    document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
+    if (selectedTopic) {
+      const card = document.getElementById('tc-' + selectedTopic);
+      if (card) card.classList.add('selected');
+    }
+    
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+    const diffBtn = document.querySelector(`[data-diff="${selectedDiff}"]`);
+    if (diffBtn) diffBtn.classList.add('selected');
+    
+    const startBtn = document.getElementById('start-btn');
+    if (startBtn) {
+      startBtn.disabled = true;
+      startBtn.textContent = 'Host Selecting Parameters...';
+    }
+    const hint = document.getElementById('select-hint');
+    if (hint) {
+      const t = TOPICS.find(t => t.id === selectedTopic);
+      hint.textContent = `${p1Name} selected: ${t ? t.name : ''} ✓`;
+    }
+  } 
+  else if (data.type === 'start') {
+    questions = data.questions;
+    selectedTopic = data.topic;
+    selectedDiff = data.diff;
+    
+    current = 0; score = 0; totalTimeUsed = 0; answered = false;
+    p1Score = 0; p2Score = 0;
+    p1Streak = 0; p1MaxStreak = 0;
+    p2Streak = 0; p2MaxStreak = 0;
+    p1TimeUsed = 0; p2TimeUsed = 0;
+    p1Answered = false; p2Answered = false;
+    p1SelectedIdx = -1; p2SelectedIdx = -1;
+    
+    showScreen('quiz-screen');
+    renderQuestion();
+  } 
+  else if (data.type === 'answer') {
+    if (data.playerNum === 1) {
+      p1SelectedIdx = data.idx;
+      p1Answered = true;
+      const overlay = document.getElementById('p1-locked-overlay');
+      if (overlay) overlay.style.display = 'flex';
+    } else {
+      p2SelectedIdx = data.idx;
+      p2Answered = true;
+      const overlay = document.getElementById('p2-locked-overlay');
+      if (overlay) overlay.style.display = 'flex';
+    }
+    
+    if (p1Answered && p2Answered) {
+      clearInterval(timerInterval);
+      const elapsed = DIFF_TIME[selectedDiff] - timeLeft;
+      p1TimeUsed += elapsed;
+      p2TimeUsed += elapsed;
+      totalTimeUsed += elapsed;
+      evaluateMultiplayerAnswers();
+    }
+  } 
+  else if (data.type === 'next') {
+    nextQuestion();
+  }
+}
+
+function getLocalDateString() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getDailyChallengeParams() {
+  const dateStr = getLocalDateString();
+  
+  let hash = 0;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash = dateStr.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  const topicKeys = Object.keys(QUESTIONS);
+  const topicIdx = Math.abs(hash) % topicKeys.length;
+  const topicId = topicKeys[topicIdx];
+  const topicObj = TOPICS.find(t => t.id === topicId);
+  
+  const difficulties = ['easy', 'medium', 'hard'];
+  const diffIdx = Math.abs(hash >> 3) % difficulties.length;
+  const difficulty = difficulties[diffIdx];
+  
+  const allTopicQuestions = QUESTIONS[topicId];
+  let seed = Math.abs(hash);
+  function seededRandom() {
+    let x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+  }
+  
+  const indices = Array.from(Array(allTopicQuestions.length).keys());
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(seededRandom() * (i + 1));
+    const temp = indices[i];
+    indices[i] = indices[j];
+    indices[j] = temp;
+  }
+  
+  const selectedQuestions = indices.slice(0, 5).map(idx => allTopicQuestions[idx]);
+  
+  return {
+    date: dateStr,
+    topicId: topicId,
+    topic: topicObj,
+    difficulty: difficulty,
+    questions: selectedQuestions
+  };
+}
+
+function startDailyQuiz() {
+  const params = getDailyChallengeParams();
+  selectedTopic = params.topicId;
+  selectedDiff = params.difficulty;
+  questions = params.questions;
+  
+  current = 0; score = 0; totalTimeUsed = 0; answered = false;
+  currentStreak = 0; maxStreak = 0;
+  
+  showScreen('quiz-screen');
+  renderQuestion();
+}
+
+function copyDailyResultsToClipboard() {
+  const params = getDailyChallengeParams();
+  const todayStr = getLocalDateString();
+  const text = `🧠 QuizBrain Daily Challenge (${todayStr})
+${params.topic.icon} ${params.topic.name} · ${params.difficulty.toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━━━
+🏆 Score: ${score}/5
+🔥 Streak: ${maxStreak}
+⏱️ Time: ${totalTimeUsed}s
+━━━━━━━━━━━━━━━━━━━━━━
+Can you beat my brain? Play today's challenge: ${location.origin}${location.pathname.replace('quiz.html', 'index.html')}
+`;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("📋 Daily Challenge score copied to clipboard! Share it with friends!");
+  }).catch(err => {
+    console.error("Clipboard copy failed:", err);
+  });
+}
+
 function checkActiveProfile() {
   const player = localStorage.getItem('quizbrain_current_player');
   if (!player) {
-    // No registered player, send to landing setup page
     location.href = 'index.html';
     return;
   }
   const parsed = JSON.parse(player);
-  currentPlayerName = parsed.name || 'Guest';
-  currentPlayerAvatar = parsed.avatar || '🚀';
   
-  document.getElementById('player-name').textContent = currentPlayerName;
-  document.getElementById('player-avatar').textContent = currentPlayerAvatar;
+  if (parsed.mode === 'battle') {
+    isMultiplayer = true;
+    p1Name = parsed.p1 ? parsed.p1.name : 'Player 1';
+    p1Avatar = parsed.p1 ? parsed.p1.avatar : '🚀';
+    p2Name = parsed.p2 ? parsed.p2.name : 'Player 2';
+    p2Avatar = parsed.p2 ? parsed.p2.avatar : '🦊';
+    document.getElementById('player-avatar').textContent = '⚔️';
+    document.getElementById('player-name').innerHTML = `<span style="color:var(--purple);">${p1Avatar} ${p1Name}</span> vs <span style="color:var(--coral);">${p2Avatar} ${p2Name}</span>`;
+  } else if (parsed.mode === 'online') {
+    isMultiplayer = true;
+    currentPlayerName = (parsed.p1 ? parsed.p1.name : parsed.name) || 'Guest';
+    currentPlayerAvatar = (parsed.p1 ? parsed.p1.avatar : parsed.avatar) || '🚀';
+    
+    document.getElementById('online-lobby-card').style.display = 'block';
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const joinRoom = urlParams.get('join');
+    if (joinRoom) {
+      connectToRoom(joinRoom);
+    }
+  } else if (parsed.mode === 'daily') {
+    isMultiplayer = false;
+    currentPlayerName = (parsed.p1 ? parsed.p1.name : parsed.name) || 'Guest';
+    currentPlayerAvatar = (parsed.p1 ? parsed.p1.avatar : parsed.avatar) || '🚀';
+    document.getElementById('player-avatar').textContent = currentPlayerAvatar;
+    document.getElementById('player-name').textContent = currentPlayerName;
+
+    // Security Check
+    const attempts = JSON.parse(localStorage.getItem('quizbrain_daily_attempts')) || {};
+    const todayStr = getLocalDateString();
+    if (attempts[todayStr]) {
+      alert("You have already completed today's challenge! Redirecting...");
+      location.href = 'index.html';
+      return;
+    }
+
+    // Toggle layouts
+    const standardLobby = document.getElementById('standard-lobby-suite');
+    if (standardLobby) standardLobby.style.display = 'none';
+    const onlineLobby = document.getElementById('online-lobby-card');
+    if (onlineLobby) onlineLobby.style.display = 'none';
+    
+    // Modify hero titles
+    const titleEl = document.querySelector('.hero-title');
+    if (titleEl) titleEl.innerHTML = `Today's <em>Challenge</em> 🔥`;
+    const subEl = document.querySelector('.hero-sub');
+    if (subEl) subEl.textContent = `A special seeded challenge refreshes every 24 hours. Can you get a perfect 5/5 score today?`;
+
+    // Render Lobby
+    const dailyLobbyCard = document.getElementById('daily-lobby-card');
+    if (dailyLobbyCard) {
+      dailyLobbyCard.style.display = 'block';
+      const params = getDailyChallengeParams();
+      const diffEmojis = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' };
+      
+      document.getElementById('daily-lobby-title').textContent = `${params.topic.icon} ${params.topic.name} Challenge`;
+      document.getElementById('daily-lobby-details').innerHTML = `
+        <span>Category: <strong style="color:var(--purple);">${params.topic.category === 'programming' ? '💻 Programming' : '🌐 General'}</strong></span>
+        <span style="color:var(--border-md);">|</span>
+        <span>Difficulty: <strong>${diffEmojis[params.difficulty]}</strong></span>
+      `;
+    }
+  } else {
+    isMultiplayer = false;
+    currentPlayerName = (parsed.p1 ? parsed.p1.name : parsed.name) || 'Guest';
+    currentPlayerAvatar = (parsed.p1 ? parsed.p1.avatar : parsed.avatar) || '🚀';
+    document.getElementById('player-avatar').textContent = currentPlayerAvatar;
+    document.getElementById('player-name').textContent = currentPlayerName;
+  }
 }
 
 function switchPlayer() {
@@ -615,11 +1695,15 @@ function switchPlayer() {
   location.href = 'index.html';
 }
 
-// Startup Initialization
 window.onload = function() {
   checkActiveProfile();
   initFirebase();
   renderTopics();
+
+  const resultWrap = document.querySelector('.result-wrap');
+  if (resultWrap) {
+    originalResultWrapHTML = resultWrap.innerHTML;
+  }
 };
 </script>
 </body>

@@ -9,35 +9,100 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container" style="padding-top: 3rem;">
-    <div style="text-align: center; margin-bottom: 2.5rem;">
-      <div class="brand" style="justify-content: center; margin-bottom: 1rem;">
+  <div class="container" style="padding-top: 2rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div class="brand" style="justify-content: center; margin-bottom: 0.5rem;">
         <div class="brand-icon" style="width: 48px; height: 48px; font-size: 24px; border-radius: 12px;">🧠</div>
         <span class="brand-name" style="font-size: 26px;">QuizBrain</span>
       </div>
       <h1 class="hero-title" style="font-size: 32px; letter-spacing: -0.02em;">Ready to test your <em>brain</em>?</h1>
-      <p class="hero-sub">Register your player profile below to start your timed knowledge battles and save your rank on the leaderboards.</p>
+      <p class="hero-sub" id="hero-sub">Register your player profile below to start your timed knowledge battles and save your rank on the leaderboards.</p>
     </div>
 
-    <div class="player-profile-card" style="background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.03);">
-      <div class="section-label" style="margin-bottom: 1rem;">Player Setup</div>
+    <!-- GAME MODE SELECTOR -->
+    <div class="mode-selector">
+      <button class="mode-btn active" id="mode-solo" onclick="setGameMode('solo')">
+        <span style="font-size: 18px;">👤</span>
+        <span style="margin-top:2px;">Solo Play</span>
+      </button>
+      <button class="mode-btn" id="mode-battle" onclick="setGameMode('battle')">
+        <span style="font-size: 18px;">⚔️</span>
+        <span style="margin-top:2px;">1v1 Battle</span>
+      </button>
+      <button class="mode-btn" id="mode-online" onclick="setGameMode('online')">
+        <span style="font-size: 18px;">🌐</span>
+        <span style="margin-top:2px;">Online Battle</span>
+      </button>
+      <button class="mode-btn" id="mode-daily" onclick="setGameMode('daily')">
+        <span style="font-size: 18px;">🔥</span>
+        <span style="margin-top:2px;">Daily Challenge</span>
+      </button>
+    </div>
+
+    <!-- DAILY CHALLENGE SPECIAL CARD -->
+    <div id="daily-challenge-card" style="display: none; background: linear-gradient(135deg, var(--purple-light), var(--coral-light)); border: 2px solid var(--purple); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(83, 74, 183, 0.08); position: relative; overflow: hidden;">
+      <div class="daily-floating-emoji">🔥</div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem; position: relative; z-index: 2;">
+        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-dark); background: rgba(83, 74, 183, 0.15); padding: 4px 10px; border-radius: 20px;">Today's Challenge</span>
+        <span id="daily-status-badge" class="status-badge available">🟢 Available</span>
+      </div>
+      <h3 style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; position: relative; z-index: 2;" id="daily-card-title">Loading Daily Challenge...</h3>
+      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 1rem; position: relative; z-index: 2;">Test your brain in today's locked daily battle! 5 specific questions. Only one attempt is permitted. Scores will be posted to the standings.</p>
       
-      <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 1.5rem;">
-        <div id="selected-avatar-preview" style="font-size: 30px; width: 56px; height: 56px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--border); transition: background 0.15s;">🚀</div>
+      <div id="daily-stats-summary" style="display:none; background:rgba(255,255,255,0.7); border-radius:var(--radius-sm); padding:0.75rem; border:1px solid var(--border); font-size:12px; position: relative; z-index: 2;">
+        <!-- Daily challenge results will be shown here if completed -->
+      </div>
+    </div>
+
+    <!-- PLAYER 1 PROFILE CARD -->
+    <div class="player-profile-card" id="p1-card" style="background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 8px 30px rgba(0,0,0,0.03);">
+      <div class="section-label" id="p1-label" style="margin-bottom: 1rem;">Player Profile</div>
+      
+      <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 1.25rem;">
+        <div id="p1-avatar-preview" style="font-size: 26px; min-width: 56px; height: 56px; padding: 0 14px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid var(--border); transition: all 0.15s; font-weight: 600;">
+          <span id="p1-preview-emoji">🚀</span>
+          <span id="p1-preview-name" style="color: var(--purple); font-size: 14px;"></span>
+        </div>
         <div style="flex: 1;">
-          <label for="player-username" style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px;">Your Username</label>
-          <input type="text" id="player-username" class="username-input" placeholder="Type name here..." style="width: 100%;" maxlength="15" oninput="validateInput()">
+          <label for="p1-username" style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px;">Username</label>
+          <input type="text" id="p1-username" class="username-input" placeholder="Player 1 Name" style="width: 100%;" maxlength="15" oninput="validateInput()">
         </div>
       </div>
 
-      <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">Choose Avatar</div>
-      <div style="display: flex; gap: 8px; justify-content: space-between; margin-bottom: 0.5rem;">
-        <span class="avatar-option active" data-avatar="🚀" onclick="selectAvatar('🚀')">🚀</span>
-        <span class="avatar-option" data-avatar="🧙‍♂️" onclick="selectAvatar('🧙‍♂️')">🧙‍♂️</span>
-        <span class="avatar-option" data-avatar="🦊" onclick="selectAvatar('🦊')">🦊</span>
-        <span class="avatar-option" data-avatar="🤖" onclick="selectAvatar('🤖')">🤖</span>
-        <span class="avatar-option" data-avatar="🦸‍♂️" onclick="selectAvatar('🦸‍♂️')">🦸‍♂️</span>
-        <span class="avatar-option" data-avatar="🐱" onclick="selectAvatar('🐱')">🐱</span>
+      <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.6rem;">Choose Avatar</div>
+      <div style="display: flex; gap: 8px; justify-content: space-between;">
+        <span class="avatar-option p1-opt active" data-avatar="🚀" onclick="selectAvatar(1, '🚀')">🚀</span>
+        <span class="avatar-option p1-opt" data-avatar="🧙‍♂️" onclick="selectAvatar(1, '🧙‍♂️')">🧙‍♂️</span>
+        <span class="avatar-option p1-opt" data-avatar="🦊" onclick="selectAvatar(1, '🦊')">🦊</span>
+        <span class="avatar-option p1-opt" data-avatar="🤖" onclick="selectAvatar(1, '🤖')">🤖</span>
+        <span class="avatar-option p1-opt" data-avatar="🦸‍♂️" onclick="selectAvatar(1, '🦸‍♂️')">🦸‍♂️</span>
+        <span class="avatar-option p1-opt" data-avatar="🐱" onclick="selectAvatar(1, '🐱')">🐱</span>
+      </div>
+    </div>
+
+    <!-- PLAYER 2 PROFILE CARD -->
+    <div class="player-profile-card" id="p2-card" style="display: none; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.03);">
+      <div class="section-label" style="margin-bottom: 1rem; color: var(--coral);">Player 2 Profile</div>
+      
+      <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 1.25rem;">
+        <div id="p2-avatar-preview" style="font-size: 26px; min-width: 56px; height: 56px; padding: 0 14px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; gap: 8px; border: 1.5px solid var(--border); transition: all 0.15s; font-weight: 600;">
+          <span id="p2-preview-emoji">🦊</span>
+          <span id="p2-preview-name" style="color: var(--coral); font-size: 14px;"></span>
+        </div>
+        <div style="flex: 1;">
+          <label for="p2-username" style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px;">Username</label>
+          <input type="text" id="p2-username" class="username-input" placeholder="Player 2 Name" style="width: 100%;" maxlength="15" oninput="validateInput()">
+        </div>
+      </div>
+
+      <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.6rem;">Choose Avatar</div>
+      <div style="display: flex; gap: 8px; justify-content: space-between;">
+        <span class="avatar-option p2-opt" data-avatar="🚀" onclick="selectAvatar(2, '🚀')">🚀</span>
+        <span class="avatar-option p2-opt" data-avatar="🧙‍♂️" onclick="selectAvatar(2, '🧙‍♂️')">🧙‍♂️</span>
+        <span class="avatar-option p2-opt active" data-avatar="🦊" onclick="selectAvatar(2, '🦊')">🦊</span>
+        <span class="avatar-option p2-opt" data-avatar="🤖" onclick="selectAvatar(2, '🤖')">🤖</span>
+        <span class="avatar-option p2-opt" data-avatar="🦸‍♂️" onclick="selectAvatar(2, '🦸‍♂️')">🦸‍♂️</span>
+        <span class="avatar-option p2-opt" data-avatar="🐱" onclick="selectAvatar(2, '🐱')">🐱</span>
       </div>
     </div>
 
@@ -52,60 +117,268 @@
   </div>
 
   <script>
-    let selectedAvatar = '🚀';
+    let gameMode = 'solo';
+    let p1Avatar = '🚀';
+    let p2Avatar = '🦊';
 
-    function selectAvatar(emoji) {
-      selectedAvatar = emoji;
-      document.querySelectorAll('.avatar-option').forEach(el => {
-        if (el.getAttribute('data-avatar') === emoji) {
-          el.classList.add('active');
-        } else {
-          el.classList.remove('active');
+    const TOPICS = [
+      { id:'ai',          name:'AI Quiz',         icon:'🤖', category:'general' },
+      { id:'movies',      name:'Movie Quiz',       icon:'🎬', category:'general' },
+      { id:'coding',      name:'Web Coding',       icon:'💻', category:'general' },
+      { id:'anime',       name:'Anime Quiz',       icon:'⚡', category:'general' },
+      { id:'python',      name:'Python',           icon:'🐍', category:'programming' },
+      { id:'ml',          name:'Machine Learning', icon:'📊', category:'programming' },
+      { id:'deeplearning',name:'Deep Learning',    icon:'🧬', category:'programming' },
+      { id:'neural',      name:'Neural Networks',  icon:'🕸️', category:'programming' },
+      { id:'oop',         name:'OOP Concepts',     icon:'🏗️', category:'programming' },
+      { id:'cpp',         name:'C++ Quiz',         icon:'⚙️', category:'programming' },
+      { id:'git',         name:'Git',              icon:'🔀', category:'programming' },
+      { id:'github',      name:'GitHub',           icon:'🐙', category:'programming' },
+      { id:'html',        name:'HTML5',            icon:'🌐', category:'programming' },
+      { id:'css',         name:'CSS3',             icon:'🎨', category:'programming' },
+      { id:'java',        name:'Java',             icon:'☕', category:'programming' },
+      { id:'linux',       name:'Linux',            icon:'🐧', category:'programming' },
+    ];
+
+    function getLocalDateString() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function hasCompletedDailyToday() {
+      const attempts = JSON.parse(localStorage.getItem('quizbrain_daily_attempts')) || {};
+      const todayStr = getLocalDateString();
+      return !!attempts[todayStr];
+    }
+
+    function getDailyChallengeParams() {
+      const dateStr = getLocalDateString();
+      
+      let hash = 0;
+      for (let i = 0; i < dateStr.length; i++) {
+        hash = dateStr.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      
+      const topicIdx = Math.abs(hash) % TOPICS.length;
+      const topic = TOPICS[topicIdx];
+      
+      const difficulties = ['easy', 'medium', 'hard'];
+      const diffIdx = Math.abs(hash >> 3) % difficulties.length;
+      const difficulty = difficulties[diffIdx];
+      
+      return {
+        date: dateStr,
+        topic: topic,
+        difficulty: difficulty
+      };
+    }
+
+    function initDailyChallengeLobby() {
+      const params = getDailyChallengeParams();
+      const cardTitle = document.getElementById('daily-card-title');
+      const statusBadge = document.getElementById('daily-status-badge');
+      const statsSummary = document.getElementById('daily-stats-summary');
+      
+      const diffEmojis = { easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' };
+      if (cardTitle) {
+        cardTitle.textContent = `${params.topic.icon} ${params.topic.name} Challenge`;
+      }
+      
+      const attempts = JSON.parse(localStorage.getItem('quizbrain_daily_attempts')) || {};
+      const todayStr = getLocalDateString();
+      
+      if (attempts[todayStr]) {
+        const attempt = attempts[todayStr];
+        if (statusBadge) {
+          statusBadge.className = 'status-badge completed';
+          statusBadge.textContent = '🔒 Completed';
         }
-      });
-      const preview = document.getElementById('selected-avatar-preview');
-      if (preview) preview.textContent = emoji;
+        if (statsSummary) {
+          statsSummary.style.display = 'block';
+          statsSummary.innerHTML = `
+            <div style="font-weight:700; color:var(--purple); margin-bottom:4px;">📊 Your Result Today:</div>
+            <div style="display:flex; justify-content:space-between; color:var(--text-secondary);">
+              <span>Score: <strong>${attempt.score}/5</strong></span>
+              <span>Streak: <strong>🔥 ${attempt.maxStreak}</strong></span>
+              <span>Time: <strong>⏱️ ${attempt.totalTime}s</strong></span>
+            </div>
+          `;
+        }
+      } else {
+        if (statusBadge) {
+          statusBadge.className = 'status-badge available';
+          statusBadge.textContent = '🟢 Available';
+        }
+        if (statsSummary) {
+          statsSummary.style.display = 'block';
+          statsSummary.innerHTML = `
+            <div style="font-weight:600; color:var(--purple-dark);">📅 Today's Match:</div>
+            <div style="display:flex; justify-content:space-between; margin-top:2px;">
+              <span>Category: <strong>${params.topic.category === 'programming' ? '💻 Programming' : '🌐 General'}</strong></span>
+              <span>Difficulty: <strong>${diffEmojis[params.difficulty]}</strong></span>
+            </div>
+          `;
+        }
+      }
+    }
+
+    function setGameMode(mode) {
+      gameMode = mode;
+      document.getElementById('mode-solo').classList.toggle('active', mode === 'solo');
+      document.getElementById('mode-battle').classList.toggle('active', mode === 'battle');
+      document.getElementById('mode-online').classList.toggle('active', mode === 'online');
+      document.getElementById('mode-daily').classList.toggle('active', mode === 'daily');
+      
+      document.getElementById('p2-card').style.display = (mode === 'battle' ? 'block' : 'none');
+      document.getElementById('p1-label').textContent = (mode === 'battle' ? 'Player 1 Profile' : 'Player Profile');
+      
+      const dailyCard = document.getElementById('daily-challenge-card');
+      if (dailyCard) {
+        dailyCard.style.display = (mode === 'daily' ? 'block' : 'none');
+      }
+      
+      validateInput();
+    }
+
+    function selectAvatar(playerNum, emoji) {
+      if (playerNum === 1) {
+        p1Avatar = emoji;
+        document.querySelectorAll('.p1-opt').forEach(el => {
+          el.classList.toggle('active', el.getAttribute('data-avatar') === emoji);
+        });
+        const previewEmoji = document.getElementById('p1-preview-emoji');
+        if (previewEmoji) previewEmoji.textContent = emoji;
+      } else {
+        p2Avatar = emoji;
+        document.querySelectorAll('.p2-opt').forEach(el => {
+          el.classList.toggle('active', el.getAttribute('data-avatar') === emoji);
+        });
+        const previewEmoji = document.getElementById('p2-preview-emoji');
+        if (previewEmoji) previewEmoji.textContent = emoji;
+      }
     }
 
     function validateInput() {
-      const username = document.getElementById('player-username').value.trim();
+      const p1Name = document.getElementById('p1-username').value.trim();
+      const p2Name = document.getElementById('p2-username').value.trim();
       const proceedBtn = document.getElementById('proceed-btn');
-      proceedBtn.disabled = (username.length === 0);
+      
+      document.getElementById('p1-preview-name').textContent = p1Name;
+      document.getElementById('p2-preview-name').textContent = p2Name;
+      
+      if (gameMode === 'solo') {
+        proceedBtn.disabled = (p1Name.length === 0);
+        if (p1Name.length > 0) {
+          proceedBtn.textContent = `Proceed to Quiz Room as ${p1Name} →`;
+        } else {
+          proceedBtn.textContent = `Proceed to Quiz Room →`;
+        }
+      } else if (gameMode === 'online') {
+        proceedBtn.disabled = (p1Name.length === 0);
+        if (p1Name.length > 0) {
+          proceedBtn.textContent = `Proceed to Online Room as ${p1Name} →`;
+        } else {
+          proceedBtn.textContent = `Proceed to Online Room →`;
+        }
+      } else if (gameMode === 'daily') {
+        const completed = hasCompletedDailyToday();
+        proceedBtn.disabled = (p1Name.length === 0 || completed);
+        if (completed) {
+          proceedBtn.textContent = `Already Attempted Today 🔒`;
+        } else if (p1Name.length > 0) {
+          proceedBtn.textContent = `Start Daily Challenge as ${p1Name}! 🔥`;
+        } else {
+          proceedBtn.textContent = `Fill username to start 🔥`;
+        }
+      } else {
+        proceedBtn.disabled = (p1Name.length === 0 || p2Name.length === 0);
+        if (p1Name.length > 0 && p2Name.length > 0) {
+          proceedBtn.textContent = `Start 1v1 Battle: ${p1Name} vs ${p2Name}! ⚔️`;
+        } else {
+          proceedBtn.textContent = `Fill both profiles to Battle ⚔️`;
+        }
+      }
     }
 
     function registerPlayer() {
-      const usernameInput = document.getElementById('player-username');
-      const username = usernameInput.value.trim();
-      if (!username) {
-        usernameInput.classList.add('shake');
-        setTimeout(() => usernameInput.classList.remove('shake'), 400);
+      const p1Input = document.getElementById('p1-username');
+      const p1Name = p1Input.value.trim();
+      if (!p1Name) {
+        p1Input.classList.add('shake');
+        setTimeout(() => p1Input.classList.remove('shake'), 400);
         return;
       }
-
-      // Store player profile details
-      const playerProfile = {
-        name: username,
-        avatar: selectedAvatar
-      };
       
-      localStorage.setItem('quizbrain_current_player', JSON.stringify(playerProfile));
-      localStorage.setItem('quizbrain_last_username', username);
-      localStorage.setItem('quizbrain_last_avatar', selectedAvatar);
+      let session = {
+        mode: gameMode,
+        p1: { name: p1Name, avatar: p1Avatar }
+      };
 
-      // Redirect to play room
-      location.href = 'quiz.html';
+      localStorage.setItem('quizbrain_last_username', p1Name);
+      localStorage.setItem('quizbrain_last_avatar', p1Avatar);
+
+      if (gameMode === 'battle') {
+        const p2Input = document.getElementById('p2-username');
+        const p2Name = p2Input.value.trim();
+        if (!p2Name) {
+          p2Input.classList.add('shake');
+          setTimeout(() => p2Input.classList.remove('shake'), 400);
+          return;
+        }
+        session.p2 = { name: p2Name, avatar: p2Avatar };
+        localStorage.setItem('quizbrain_last_username2', p2Name);
+        localStorage.setItem('quizbrain_last_avatar2', p2Avatar);
+      }
+
+      localStorage.setItem('quizbrain_current_player', JSON.stringify(session));
+
+      // Auto-forward any join query code
+      const urlParams = new URLSearchParams(window.location.search);
+      const joinRoom = urlParams.get('join');
+      if (joinRoom) {
+        location.href = `quiz.html?join=${joinRoom}`;
+      } else {
+        location.href = 'quiz.html';
+      }
     }
 
     // On startup
     window.onload = function() {
       const savedUser = localStorage.getItem('quizbrain_last_username') || '';
       const savedAvatar = localStorage.getItem('quizbrain_last_avatar') || '🚀';
+      const savedUser2 = localStorage.getItem('quizbrain_last_username2') || '';
+      const savedAvatar2 = localStorage.getItem('quizbrain_last_avatar2') || '🦊';
       
       if (savedUser) {
-        document.getElementById('player-username').value = savedUser;
-        validateInput();
+        document.getElementById('p1-username').value = savedUser;
       }
-      selectAvatar(savedAvatar);
+      if (savedUser2) {
+        document.getElementById('p2-username').value = savedUser2;
+      }
+      
+      selectAvatar(1, savedAvatar);
+      selectAvatar(2, savedAvatar2);
+      
+      initDailyChallengeLobby();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const joinRoom = urlParams.get('join');
+      if (joinRoom) {
+        setGameMode('online');
+        const sub = document.getElementById('hero-sub');
+        if (sub) {
+          sub.innerHTML = `You have been invited to an Online Battle! Register your username below to join Room: <strong style="color:var(--purple);">${joinRoom}</strong>`;
+        }
+      } else if (savedUser) {
+        const sub = document.getElementById('hero-sub');
+        if (sub) {
+          sub.innerHTML = `Welcome back, <strong style="color:var(--purple);">${savedUser}</strong>! Adjust your profile details below or start playing right away.`;
+        }
+      }
+      validateInput();
     };
   </script>
 </body>

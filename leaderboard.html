@@ -180,6 +180,7 @@
             const diffColors = { easy: 'var(--green)', medium: 'var(--amber)', hard: 'var(--red)' };
             const diffText = s.difficulty.charAt(0).toUpperCase() + s.difficulty.slice(1);
             
+            const dailyBadge = s.isDaily ? `<span class="badge-daily" style="font-size:8px; padding:1.5px 5px; border-radius:3px; font-weight:700; letter-spacing:0.04em; margin-left:4px;">Daily</span>` : '';
             return `
               <tr>
                 <td>${rankBadge}</td>
@@ -187,6 +188,7 @@
                   <span style="display:flex; align-items:center; gap:6px;">
                     <span>${s.avatar || '🚀'}</span>
                     <span>${escapeHTML(s.username)}</span>
+                    ${dailyBadge}
                   </span>
                 </td>
                 <td>

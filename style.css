@@ -411,3 +411,222 @@ body {
   background: var(--purple-light);
   transform: scale(1.1);
 }
+
+/* ── MULTIPLAYER MODE STYLES ── */
+.mode-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+.mode-btn {
+  flex: 1;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.85rem 0.5rem;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.mode-btn:hover {
+  border-color: var(--border-md);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.mode-btn.active {
+  border: 2px solid var(--purple);
+  color: var(--purple);
+  background: var(--purple-light);
+}
+
+.battle-arena {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+.player-column {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  position: relative;
+  transition: border-color 0.15s;
+}
+.player-column.p1-side.active-winner {
+  border-color: var(--purple);
+  box-shadow: 0 0 15px rgba(83, 74, 183, 0.2);
+}
+.player-column.p2-side.active-winner {
+  border-color: var(--coral);
+  box-shadow: 0 0 15px rgba(153, 60, 29, 0.2);
+}
+
+.option-grid-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.option-btn-compact {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.8rem;
+  text-align: left;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.option-btn-compact:hover:not(:disabled) {
+  border-color: var(--purple);
+}
+.option-btn-compact:disabled {
+  cursor: default;
+}
+.option-btn-compact.correct {
+  background: var(--green-light);
+  border-color: var(--green);
+  color: var(--green);
+}
+.option-btn-compact.wrong {
+  background: var(--red-light);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.locked-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: var(--radius);
+  z-index: 10;
+  font-weight: 700;
+  color: var(--purple-dark);
+}
+@media (prefers-color-scheme: dark) {
+  .locked-overlay {
+    background: rgba(36, 36, 40, 0.88);
+    color: var(--purple-light);
+  }
+}
+
+.battle-bar-wrap {
+  height: 20px;
+  width: 100%;
+  background: var(--border);
+  border-radius: 10px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  position: relative;
+}
+.battle-bar-p1 {
+  height: 100%;
+  float: left;
+  background: var(--purple);
+  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.battle-bar-p2 {
+  height: 100%;
+  float: right;
+  background: var(--coral);
+  transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.key-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--border);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  padding: 1px 4px;
+  border: 1px solid var(--border-md);
+  margin-left: auto;
+}
+
+/* ── DAILY CHALLENGE STYLES ── */
+@keyframes floatDaily {
+  0% { transform: translateY(0) rotate(-15deg); }
+  50% { transform: translateY(-8px) rotate(-10deg); }
+  100% { transform: translateY(0) rotate(-15deg); }
+}
+
+.daily-floating-emoji {
+  position: absolute;
+  right: -10px;
+  bottom: -15px;
+  font-size: 130px;
+  opacity: 0.12;
+  transform: rotate(-15deg);
+  user-select: none;
+  pointer-events: none;
+  animation: floatDaily 6s ease-in-out infinite;
+}
+
+#daily-challenge-card {
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+#daily-challenge-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(83, 74, 183, 0.15);
+}
+
+/* Status Badges */
+.status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-badge.available {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.status-badge.completed {
+  background: var(--border-md);
+  color: var(--text-secondary);
+}
+
+/* Daily stand-out text badge on leaderboard */
+.badge-daily {
+  background: linear-gradient(135deg, var(--purple), var(--coral));
+  color: white !important;
+  font-size: 9px !important;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(83, 74, 183, 0.3);
+}
+
+
