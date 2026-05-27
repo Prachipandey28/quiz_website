@@ -367,6 +367,12 @@ const TOPICS = [
   { id:'neural',      name:'Neural Networks',  icon:'🕸️', category:'programming' },
   { id:'oop',         name:'OOP Concepts',     icon:'🏗️', category:'programming' },
   { id:'cpp',         name:'C++ Quiz',         icon:'⚙️', category:'programming' },
+  { id:'git',         name:'Git',              icon:'🔀', category:'programming' },
+  { id:'github',      name:'GitHub',           icon:'🐙', category:'programming' },
+  { id:'html',        name:'HTML5',            icon:'🌐', category:'programming' },
+  { id:'css',         name:'CSS3',             icon:'🎨', category:'programming' },
+  { id:'java',        name:'Java',             icon:'☕', category:'programming' },
+  { id:'linux',       name:'Linux',            icon:'🐧', category:'programming' },
 ];
 
 const DIFF_TIME = { easy: 30, medium: 20, hard: 10 };
@@ -382,7 +388,69 @@ const QUESTIONS = {
     { q:'Which architecture powers most modern large language models?', opts:['Convolutional Neural Network','Recurrent Network','Transformer','Decision Tree'], ans:2 },
     { q:'What does "GPU" stand for?', opts:['General Processing Unit','Graphics Processing Unit','Global Parallel Unit','Generative Processing Utility'], ans:1 },
     { q:'Which term describes training an AI on unlabeled data?', opts:['Supervised learning','Reinforcement learning','Unsupervised learning','Transfer learning'], ans:2 },
-    { q:'What is "overfitting" in machine learning?', opts:['Model trains too slowly','Model performs well on training data but poorly on new data','Model uses too much memory','Model ignores training data'], ans:1 }
+    { q:'What is "overfitting" in machine learning?', opts:['Model trains too slowly','Model performs well on training data but poorly on new data','Model uses too much memory','Model ignores training data'], ans:1 },
+    { q:'What does "NLP" stand for in artificial intelligence?', opts:['Natural Language Processing','Neural Logic Programming','Network Link Protocol','Numerical Language Prediction'], ans:0 },
+    { q:'What is "reinforcement learning"?', opts:['Learning by predicting values from labels','Learning by trial and error through rewards and punishments','Learning by organizing unlabeled data','Learning by copying an expert\'s weights'], ans:1 }
+  ],
+  git: [
+    { q:'Which Git command initializes a new local repository?', opts:['git start','git init','git create','git new'], ans:1 },
+    { q:'How do you stage changes for a commit in Git?', opts:['git save','git stage','git commit','git add'], ans:3 },
+    { q:'Which Git command displays the status of the working directory and staging area?', opts:['git check','git status','git info','git diff'], ans:1 },
+    { q:'What is the primary difference between "git fetch" and "git pull"?', opts:['git pull only downloads changes; git fetch also merges them','git fetch only downloads changes; git pull also merges them','There is no difference between them','git fetch deletes local branches'], ans:1 },
+    { q:'How do you create a new branch and switch to it immediately in Git?', opts:['git branch -c <name>','git checkout -b <name>','git switch -n <name>','git new-branch <name>'], ans:1 },
+    { q:'Which Git command integrates changes from one branch into another by rewriting commits?', opts:['git merge','git combine','git rebase','git fast-forward'], ans:2 },
+    { q:'How do you undo the last commit while keeping your local changes intact?', opts:['git reset --soft HEAD~1','git reset --hard HEAD~1','git revert HEAD','git rollback'], ans:0 },
+    { q:'Which file is used to specify files and directories that Git should ignore?', opts:['.gitconfig','.ignore','.gitignore','.gitexclude'], ans:2 }
+  ],
+  github: [
+    { q:'What is a "Pull Request" on GitHub?', opts:['A request to download a repository','A proposed set of changes you want to merge into a branch','A request to delete a branch','A customer support ticket'], ans:1 },
+    { q:'What does "Forking" a repository mean on GitHub?', opts:['Deleting the repository completely','Creating a personal copy of someone\'s repository on your account','Merging two branches from different repositories','Downloading code to a local workspace'], ans:1 },
+    { q:'Which GitHub feature allows you to automate workflows and CI/CD pipelines?', opts:['GitHub Pages','GitHub Issues','GitHub Actions','GitHub Projects'], ans:2 },
+    { q:'How do you link a local repository to a remote repository on GitHub?', opts:['git remote add origin <url>','git link remote <url>','git remote connect <url>','git set-url <url>'], ans:0 },
+    { q:'What is the default branch name created for new repositories on GitHub?', opts:['master','main','root','prod'], ans:1 },
+    { q:'What is "GitHub Pages" primarily used for?', opts:['Writing technical documentation','Managing team workflows','Hosting static websites directly from a repository','Tracking system bugs'], ans:2 },
+    { q:'Which file in a repository is typically used to display project details on GitHub?', opts:['ABOUT.txt','INDEX.html','README.md','LICENSE.md'], ans:2 },
+    { q:'What is a "Release" on GitHub?', opts:['Deleting old code branches','A packaged version of software with release notes','Publishing a project blog post','Granting admin permissions'], ans:1 }
+  ],
+  html: [
+    { q:'What does HTML stand for?', opts:['HighText Machine Language','HyperText Markup Language','HyperLink and Text Markup Language','Home Tool Markup Language'], ans:1 },
+    { q:'Which HTML5 tag is used to define the most important heading?', opts:['<heading>','<h6>','<h1>','<header>'], ans:2 },
+    { q:'What is the correct HTML element for inserting a line break?', opts:['<break>','<lb>','<br>','<hr>'], ans:2 },
+    { q:'Which attribute is used to specify the destination URL of a hyperlink?', opts:['src','link','href','target'], ans:2 },
+    { q:'Which HTML5 element represents self-contained content, like an illustration or photo?', opts:['<picture>','<figure>','<aside>','<section>'], ans:1 },
+    { q:'What is the purpose of the alt attribute on an <img> tag?', opts:['To specify a high-resolution image','To provide alternative text if the image cannot load','To align the image on the screen','To make the image load faster'], ans:1 },
+    { q:'Which tag is used to create an unordered list in HTML?', opts:['<ol>','<ul>','<li>','<list>'], ans:1 },
+    { q:'Which HTML5 tag is used to display a drop-down list of options?', opts:['<input>','<dropdown>','<select>','<list>'], ans:2 }
+  ],
+  css: [
+    { q:'What does CSS stand for?', opts:['Creative Style Sheets','Cascading Style Sheets','Computer Style Sheets','Colorful Style Sheets'], ans:1 },
+    { q:'Which CSS property controls the size of text?', opts:['text-size','font-style','font-size','text-style'], ans:2 },
+    { q:'How do you select an element with the id "header" in CSS?', opts:['.header','#header','*header','header'], ans:1 },
+    { q:'In the CSS Box Model, which layer is positioned between padding and margin?', opts:['Content','Border','Outline','Gap'], ans:1 },
+    { q:'How do you display a flex container\'s items in a vertical column?', opts:['flex-direction: column','flex-flow: vertical','display: column','align-items: column'], ans:0 },
+    { q:'Which CSS property is used to align items horizontally inside a Flexbox container?', opts:['align-items','justify-content','text-align','align-content'], ans:1 },
+    { q:'What is the default position value for HTML elements in CSS?', opts:['relative','absolute','static','fixed'], ans:2 },
+    { q:'Which property allows you to create smooth transitions between property changes?', opts:['animation','transition','transform','duration'], ans:1 }
+  ],
+  java: [
+    { q:'Which component of Java compiles Java source code into bytecode?', opts:['JVM (Java Virtual Machine)','JDK (Java Development Kit)','JRE (Java Runtime Environment)','JIT (Just-In-Time Compiler)'], ans:1 },
+    { q:'What is the correct signature for the main entry point method in Java?', opts:['public void main(String args[])','public static void main(String[] args)','static void main(String args)','public static int main(String[] args)'], ans:1 },
+    { q:'Which keyword is used to inherit a class in Java?', opts:['implements','extends','inherits','super'], ans:1 },
+    { q:'What is the default value of an uninitialized object reference in Java?', opts:['0','void','null','undefined'], ans:2 },
+    { q:'Which memory area in Java is used to allocate objects dynamically at runtime?', opts:['Stack memory','Heap memory','Method area','Registers'], ans:1 },
+    { q:'Which class is the root class of the entire Java class hierarchy?', opts:['System','String','Object','Class'], ans:2 },
+    { q:'How do you declare a constant in Java?', opts:['const int X = 10;','final int X = 10;','static int X = 10;','immutable int X = 10;'], ans:1 },
+    { q:'Which exception is thrown when an application attempts to use null where an object is required?', opts:['NullPointerException','ArrayIndexOutOfBoundsException','IllegalArgumentException','ArithmeticException'], ans:0 }
+  ],
+  linux: [
+    { q:'Which Linux command is used to display the current working directory?', opts:['dir','pwd','cd','path'], ans:1 },
+    { q:'How do you change file permissions in Linux?', opts:['chown','chmod','attrib','permit'], ans:1 },
+    { q:'Which command is used to search for a specific text pattern within files using regex?', opts:['find','search','grep','locate'], ans:2 },
+    { q:'What is the root directory in the Linux directory structure represented by?', opts:['~','/','/root','.'], ans:1 },
+    { q:'Which command allows a permitted user to execute a command as the superuser?', opts:['su','sudo','admin','runas'], ans:1 },
+    { q:'How do you view running system processes in real-time in Linux?', opts:['ps','top','df','free'], ans:1 },
+    { q:'Which command is used to delete a directory and all of its contents recursively?', opts:['rmdir -r','rm -rf','del -all','remove -dir'], ans:1 },
+    { q:'What does the command "man <command>" do in Linux?', opts:['Runs the command in background','Displays the manual page for the command','Installs the command','Deletes the command'], ans:1 }
   ],
   movies: [
     { q:'Who directed "Inception" (2010)?', opts:['Steven Spielberg','Ridley Scott','Christopher Nolan','James Cameron'], ans:2 },
