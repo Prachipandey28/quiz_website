@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QuizBrain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --coral: #993C1D;
+    --coral-light: #FAECE7;
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --border: rgba(0,0,0,0.1);
+    --border-md: rgba(0,0,0,0.18);
+    --text: #1a1a18;
+    --text-secondary: #6b6b67;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --timer-color: var(--purple);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #18181A;
+      --surface: #242428;
+      --border: rgba(255,255,255,0.1);
+      --border-md: rgba(255,255,255,0.18);
+      --text: #F0EFE8;
+      --text-secondary: #8a8a86;
+      --purple-light: #2a2660;
+      --green-light: #1a2e0a;
+      --red-light: #2e1010;
+      --amber-light: #2a1a04;
+      --teal-light: #062e22;
+      --coral-light: #2e1408;
+    }
+  }
+
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── HOME ── */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .brand-icon {
+    width: 36px; height: 36px;
+    background: var(--purple);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .brand-name {
+    font-size: 20px; font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title {
+    font-size: 36px; font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.6rem;
+  }
+  .hero-title em { font-style: normal; color: var(--purple); }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .topic-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.12s, box-shadow 0.12s;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .topic-card:hover { transform: translateY(-2px); border-color: var(--border-md); }
+  .topic-card.selected { border: 2px solid var(--purple); }
+  .topic-card.selected .topic-icon-wrap { background: var(--purple-light); }
+
+  .topic-icon-wrap {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 0.75rem;
+    transition: background 0.15s;
+  }
+  .topic-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .topic-meta { font-size: 12px; color: var(--text-secondary); }
+
+  .difficulty-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 2rem;
+  }
+  .diff-btn {
+    flex: 1;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.5rem;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .diff-btn:hover { border-color: var(--border-md); color: var(--text); }
+  .diff-btn.selected { border: 2px solid var(--purple); color: var(--purple); background: var(--purple-light); }
+
+  .start-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hint-text { font-size: 13px; color: var(--text-secondary); }
+
+  .btn-primary {
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.7rem 1.6rem;
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.12s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+  .btn-primary:active:not(:disabled) { transform: scale(0.97); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1.5px solid var(--border-md);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1.25rem;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-outline:hover { background: var(--bg); }
+
+  /* ── QUIZ ── */
+  .quiz-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .topic-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--purple-light);
+    color: var(--purple-dark);
+  }
+
+  /* Timer */
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .timer-ring-wrap {
+    position: relative;
+    width: 42px; height: 42px;
+  }
+  .timer-ring-wrap svg {
+    position: absolute; inset: 0;
+    transform: rotate(-90deg);
+  }
+  .timer-ring-bg { stroke: var(--border); fill: none; stroke-width: 3; }
+  .timer-ring-fg { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
+  .timer-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .timer-num.urgent { color: var(--red); }
+
+  .progress-bar-wrap {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 3px;
+    background: var(--purple);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .q-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 500; }
+  .q-text {
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
+
+  .option-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--purple);
+    transform: translateX(3px);
+  }
+  .option-btn:disabled { cursor: default; }
+  .option-btn.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .option-btn.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+  .opt-letter {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--bg);
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: background 0.15s, color 0.15s;
+  }
+  .option-btn.correct .opt-letter { background: var(--green); color: #fff; }
+  .option-btn.wrong .opt-letter { background: var(--red); color: #fff; }
+
+  .feedback-bar {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0.65rem 1rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+  .feedback-bar.correct { background: var(--green-light); color: var(--green); }
+  .feedback-bar.wrong { background: var(--red-light); color: var(--red); }
+  .feedback-bar.timeout { background: var(--amber-light); color: var(--amber); }
+
+  .quiz-footer { display: flex; justify-content: flex-end; }
+
+  /* ── RESULTS ── */
+  .result-wrap { padding: 2rem 0; text-align: center; }
+  .result-emoji { font-size: 60px; margin-bottom: 1rem; }
+  .result-score {
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--purple);
+    margin-bottom: 0.2rem;
+  }
+  .result-topic { font-size: 14px; color: var(--text-secondary); margin-bottom: 0.4rem; }
+  .result-msg { font-size: 18px; font-weight: 600; margin-bottom: 1.75rem; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto 2rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.5rem;
+  }
+  .stat-num { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+  .stat-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+  .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .screen.active { animation: fadeIn 0.25s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+  .shake { animation: shake 0.35s ease; }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
+  .pop { animation: pop 0.25s ease; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HOME -->
+  <div id="home-screen" class="screen active">
+    <div class="brand">
+      <div class="brand-icon">🧠</div>
+      <span class="brand-name">QuizBrain</span>
+    </div>
+    <h1 class="hero-title">Test your <em>knowledge</em>.<br>Beat the clock.</h1>
+    <p class="hero-sub">Pick a topic, choose your difficulty, and answer 5 questions before time runs out.</p>
+
+    <div class="section-label">Choose a topic</div>
+    <div class="topics-grid" id="topics-grid"></div>
+
+    <div class="section-label">Difficulty</div>
+    <div class="difficulty-row" id="diff-row">
+      <button class="diff-btn selected" data-diff="easy" onclick="selectDiff('easy')">🟢 Easy<br><span style="font-size:11px;font-weight:400;">30s per Q</span></button>
+      <button class="diff-btn" data-diff="medium" onclick="selectDiff('medium')">🟡 Medium<br><span style="font-size:11px;font-weight:400;">20s per Q</span></button>
+      <button class="diff-btn" data-diff="hard" onclick="selectDiff('hard')">🔴 Hard<br><span style="font-size:11px;font-weight:400;">10s per Q</span></button>
+    </div>
+
+    <div class="start-row">
+      <span class="hint-text" id="select-hint">Select a topic to begin</span>
+      <button class="btn-primary" id="start-btn" disabled onclick="startQuiz()">Start Quiz →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-screen" class="screen">
+    <div style="padding-top:1.5rem;">
+      <div class="quiz-top">
+        <span class="topic-badge" id="quiz-badge">AI Quiz</span>
+        <div class="timer-wrap">
+          <div class="timer-ring-wrap">
+            <svg viewBox="0 0 42 42">
+              <circle class="timer-ring-bg" cx="21" cy="21" r="18"/>
+              <circle class="timer-ring-fg" id="timer-ring" cx="21" cy="21" r="18"
+                stroke-dasharray="113.1" stroke-dashoffset="0" stroke="var(--purple)"/>
+            </svg>
+            <div class="timer-num" id="timer-num">30</div>
+          </div>
+          <span style="font-size:12px;color:var(--text-secondary);" id="q-counter">1/5</span>
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:20%"></div>
+      </div>
+
+      <div class="q-label" id="q-label">Question 1 of 5</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback-bar" id="feedback" style="display:none;"></div>
+      <div class="quiz-footer">
+        <button class="btn-primary" id="next-btn" style="display:none;" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="result-screen" class="screen">
+    <div class="result-wrap">
+      <div class="result-emoji" id="result-emoji">🎉</div>
+      <div class="result-score" id="result-score">4/5</div>
+      <div class="result-topic" id="result-topic">AI Quiz · Medium</div>
+      <div class="result-msg" id="result-msg">Great job!</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="s-correct" style="color:var(--green);">0</div>
+          <div class="stat-lbl">Correct</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="s-wrong" style="color:var(--red);">0</div>
+          <div class="stat-lbl">Wrong</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="s-time" style="color:var(--purple);">0s</div>
+          <div class="stat-lbl">Avg time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="s-pct">0%</div>
+          <div class="stat-lbl">Score</div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn-outline" onclick="goHome()">🏠 Home</button>
+        <button class="btn-primary" onclick="retryQuiz()">↺ Try Again</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const TOPICS = [
+  { id:'ai',     name:'AI Quiz',     icon:'🤖', accent:'#534AB7' },
+  { id:'movies', name:'Movie Quiz',  icon:'🎬', accent:'#993C1D' },
+  { id:'coding', name:'Coding Quiz', icon:'💻', accent:'#0F6E56' },
+  { id:'anime',  name:'Anime Quiz',  icon:'⚡', accent:'#854F0B' }
+];
+
+const DIFF_TIME = { easy: 30, medium: 20, hard: 10 };
+const LETTERS = ['A','B','C','D'];
+
+const QUESTIONS = {
+  ai: [
+    { q:'What does "LLM" stand for in the context of AI?', opts:['Large Language Model','Linked Logic Module','Layered Learning Machine','Linear Language Map'], ans:0 },
+    { q:'Which company created ChatGPT?', opts:['Google','Meta','OpenAI','Anthropic'], ans:2 },
+    { q:'What is "hallucination" in AI?', opts:['AI dreaming during idle time','AI generating false information confidently','AI misreading images','AI running slowly'], ans:1 },
+    { q:'What is the Turing Test designed to measure?', opts:['Processing speed','Energy efficiency','A machine\'s ability to mimic human conversation','Image recognition accuracy'], ans:2 },
+    { q:'Which architecture powers most modern large language models?', opts:['Convolutional Neural Network','Recurrent Network','Transformer','Decision Tree'], ans:2 },
+    { q:'What does "GPU" stand for?', opts:['General Processing Unit','Graphics Processing Unit','Global Parallel Unit','Generative Processing Utility'], ans:1 },
+    { q:'Which term describes training an AI on unlabeled data?', opts:['Supervised learning','Reinforcement learning','Unsupervised learning','Transfer learning'], ans:2 },
+    { q:'What is "overfitting" in machine learning?', opts:['Model trains too slowly','Model performs well on training data but poorly on new data','Model uses too much memory','Model ignores training data'], ans:1 }
+  ],
+  movies: [
+    { q:'Who directed "Inception" (2010)?', opts:['Steven Spielberg','Ridley Scott','Christopher Nolan','James Cameron'], ans:2 },
+    { q:'In "The Matrix", what colour pill does Neo take?', opts:['Blue','Green','Red','Yellow'], ans:2 },
+    { q:'Which Disney film features the song "Let It Go"?', opts:['Brave','Moana','Frozen','Encanto'], ans:2 },
+    { q:'What is the highest-grossing film of all time by nominal box office?', opts:['Avatar','Avengers: Endgame','Titanic','Star Wars: The Force Awakens'], ans:0 },
+    { q:'Which actress played Katniss Everdeen in The Hunger Games?', opts:['Shailene Woodley','Emma Watson','Jennifer Lawrence','Saoirse Ronan'], ans:2 },
+    { q:'In "Titanic" (1997), what is Jack\'s last name?', opts:['Dawson','Harrison','Carter','Turner'], ans:0 },
+    { q:'Which film won the Academy Award for Best Picture in 2020?', opts:['1917','Joker','Parasite','Once Upon a Time in Hollywood'], ans:2 },
+    { q:'What is the name of the toy store in the movie "Big" (1988)?', opts:['Toy World','MacMillan\'s','FAO Schwarz','Zoltar Toys'], ans:2 }
+  ],
+  coding: [
+    { q:'What does CSS stand for?', opts:['Creative Style Sheets','Cascading Style Sheets','Computer Styling System','Coded Styling Syntax'], ans:1 },
+    { q:'Which data structure follows LIFO order?', opts:['Queue','Linked List','Stack','Tree'], ans:2 },
+    { q:'What symbol starts a single-line comment in Python?', opts:['//','/*','#','--'], ans:2 },
+    { q:'What does "DOM" stand for in web development?', opts:['Data Object Manager','Document Object Model','Design Object Module','Dynamic Output Map'], ans:1 },
+    { q:'Which sorting algorithm has O(n log n) average time complexity?', opts:['Bubble Sort','Insertion Sort','Merge Sort','Selection Sort'], ans:2 },
+    { q:'What does SQL stand for?', opts:['Simple Query Language','Structured Query Language','Standard Query Logic','Sequential Query Layer'], ans:1 },
+    { q:'Which keyword is used to declare a constant in JavaScript?', opts:['var','let','const','def'], ans:2 },
+    { q:'What is the result of 5 % 2 in most programming languages?', opts:['2','2.5','1','0'], ans:2 }
+  ],
+  anime: [
+    { q:'What is the name of the main character in "Naruto"?', opts:['Sasuke Uchiha','Naruto Uzumaki','Kakashi Hatake','Rock Lee'], ans:1 },
+    { q:'In Dragon Ball Z, what transformation does Goku first achieve in the Frieza arc?', opts:['Super Saiyan 2','Ultra Instinct','Super Saiyan','Super Saiyan 3'], ans:2 },
+    { q:'Which studio produced "Spirited Away"?', opts:['Toei Animation','Kyoto Animation','Madhouse','Studio Ghibli'], ans:3 },
+    { q:'What is the power system called in "Hunter x Hunter"?', opts:['Chakra','Nen','Haki','Alchemy'], ans:1 },
+    { q:'In "Death Note", what is the name of the Shinigami who drops the Death Note?', opts:['Rem','Gelus','Ryuk','Sidoh'], ans:2 },
+    { q:'Which anime features the Survey Corps fighting giant humanoid creatures?', opts:['Tokyo Ghoul','Demon Slayer','Attack on Titan','Fullmetal Alchemist'], ans:2 },
+    { q:'What is Luffy\'s dream in "One Piece"?', opts:['To become the strongest swordsman','To find the All Blue','To become King of the Pirates','To return to his hometown'], ans:2 },
+    { q:'In "My Hero Academia", what is the name of the top hero (All Might\'s successor)?', opts:['Bakugo','Todoroki','Deku (Izuku Midoriya)','Kirishima'], ans:2 }
+  ]
+};
+
+let selectedTopic = null, selectedDiff = 'easy';
+let questions = [], current = 0, score = 0, answered = false;
+let timerInterval = null, timeLeft = 0, totalTimeUsed = 0, questionStartTime = 0;
+const CIRCUMFERENCE = 2 * Math.PI * 18;
+
+function renderTopics() {
+  const grid = document.getElementById('topics-grid');
+  grid.innerHTML = TOPICS.map(t => `
+    <div class="topic-card" id="tc-${t.id}" onclick="selectTopic('${t.id}')">
+      <div class="topic-icon-wrap">${t.icon}</div>
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-meta">5 questions</div>
+    </div>`).join('');
+}
+
+function selectTopic(id) {
+  selectedTopic = id;
+  document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('tc-' + id).classList.add('selected');
+  document.getElementById('start-btn').disabled = false;
+  document.getElementById('select-hint').textContent = TOPICS.find(t => t.id === id).name + ' selected ✓';
+}
+
+function selectDiff(d) {
+  selectedDiff = d;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector(`[data-diff="${d}"]`).classList.add('selected');
+}
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function startQuiz() {
+  if (!selectedTopic) return;
+  questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+  current = 0; score = 0; totalTimeUsed = 0; answered = false;
+  showScreen('quiz-screen');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  answered = false;
+  clearInterval(timerInterval);
+  const q = questions[current];
+  const total = DIFF_TIME[selectedDiff];
+  const t = TOPICS.find(t => t.id === selectedTopic);
+
+  document.getElementById('quiz-badge').textContent = t.name;
+  document.getElementById('q-counter').textContent = `${current + 1}/5`;
+  document.getElementById('q-label').textContent = `Question ${current + 1} of 5`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('progress-bar').style.width = ((current + 1) / 5 * 100) + '%';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const optDiv = document.getElementById('options');
+  optDiv.innerHTML = q.opts.map((o, i) => `
+    <button class="option-btn" id="opt-${i}" onclick="selectAnswer(${i})">
+      <span class="opt-letter">${LETTERS[i]}</span>
+      <span>${o}</span>
+    </button>`).join('');
+
+  timeLeft = total;
+  questionStartTime = Date.now();
+  updateTimer(timeLeft, total);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer(timeLeft, total);
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      onTimeout();
+    }
+  }, 1000);
+}
+
+function updateTimer(t, total) {
+  const offset = CIRCUMFERENCE * (1 - t / total);
+  const ring = document.getElementById('timer-ring');
+  const numEl = document.getElementById('timer-num');
+  ring.style.strokeDashoffset = offset;
+  numEl.textContent = t;
+  if (t <= 5) {
+    ring.style.stroke = '#E24B4A';
+    numEl.classList.add('urgent');
+  } else if (t <= Math.floor(total * 0.4)) {
+    ring.style.stroke = '#BA7517';
+    numEl.classList.remove('urgent');
+  } else {
+    ring.style.stroke = '#534AB7';
+    numEl.classList.remove('urgent');
+  }
+}
+
+function onTimeout() {
+  answered = true;
+  const q = questions[current];
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  document.getElementById('opt-' + q.ans).classList.add('correct');
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback-bar timeout';
+  fb.textContent = `⏰ Time's up! The answer was: ${q.opts[q.ans]}`;
+  fb.style.display = 'block';
+  totalTimeUsed += DIFF_TIME[selectedDiff];
+  showNextBtn();
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  totalTimeUsed += DIFF_TIME[selectedDiff] - timeLeft;
+
+  const q = questions[current];
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const chosen = document.getElementById('opt-' + idx);
+  const fb = document.getElementById('feedback');
+
+  if (idx === q.ans) {
+    chosen.classList.add('correct');
+    chosen.classList.add('pop');
+    score++;
+    fb.className = 'feedback-bar correct';
+    fb.textContent = '✓ Correct!';
+  } else {
+    chosen.classList.add('wrong');
+    chosen.classList.add('shake');
+    document.getElementById('opt-' + q.ans).classList.add('correct');
+    fb.className = 'feedback-bar wrong';
+    fb.textContent = `✗ Incorrect. The answer was: ${q.opts[q.ans]}`;
+  }
+  fb.style.display = 'block';
+  showNextBtn();
+}
+
+function showNextBtn() {
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'inline-flex';
+  nb.textContent = current < questions.length - 1 ? 'Next →' : 'See Results →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) renderQuestion();
+  else showResults();
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  showScreen('result-screen');
+  const t = TOPICS.find(t => t.id === selectedTopic);
+  const wrong = questions.length - score;
+  const pct = Math.round(score / questions.length * 100);
+  const avgTime = Math.round(totalTimeUsed / questions.length);
+  const tier = score === 5 ? 4 : score >= 4 ? 3 : score >= 3 ? 2 : score >= 2 ? 1 : 0;
+  const emojis = ['😅','🤔','😊','🎉','🏆'];
+  const msgs = ['Keep practising!','Not bad, keep going!','Solid effort!','Great job!','Perfect score!'];
+
+  document.getElementById('result-emoji').textContent = emojis[tier];
+  document.getElementById('result-score').textContent = `${score}/5`;
+  document.getElementById('result-topic').textContent = `${t.name} · ${selectedDiff.charAt(0).toUpperCase() + selectedDiff.slice(1)}`;
+  document.getElementById('result-msg').textContent = msgs[tier];
+  document.getElementById('s-correct').textContent = score;
+  document.getElementById('s-wrong').textContent = wrong;
+  document.getElementById('s-time').textContent = avgTime + 's';
+  document.getElementById('s-pct').textContent = pct + '%';
+}
+
+function goHome() { clearInterval(timerInterval); showScreen('home-screen'); }
+function retryQuiz() {
+  current = 0; score = 0; totalTimeUsed = 0;
+  questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+  showScreen('quiz-screen');
+  renderQuestion();
+}
+
+renderTopics();
+</script>
+</body>
+</html>
