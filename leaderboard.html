@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizBrain Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="container" style="padding-top: 1rem;">
+    
+    <div class="leaderboard-header">
+      <h2 class="leaderboard-title">🏆 Leaderboard</h2>
+      <button class="btn-outline" style="padding: 0.45rem 1rem; font-size: 13px;" onclick="location.href='index.html'">🏠 Home</button>
+    </div>
+
+    <div class="leaderboard-filters">
+      <select id="filter-topic" class="leaderboard-select" onchange="renderLeaderboardTable()">
+        <option value="all">All Topics</option>
+      </select>
+      <select id="filter-diff" class="leaderboard-select" onchange="renderLeaderboardTable()">
+        <option value="all">All Difficulties</option>
+        <option value="easy">🟢 Easy</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="hard">🔴 Hard</option>
+      </select>
+    </div>
+
+    <div class="leaderboard-table-wrap">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th style="width: 60px;">Rank</th>
+            <th>Player</th>
+            <th>Topic</th>
+            <th style="text-align: center;">Score</th>
+            <th style="text-align: center;">Streak</th>
+            <th style="text-align: center;">Time</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-tbody">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+      <div id="leaderboard-empty" class="empty-state hidden">
+        No scores recorded yet. Be the first to play and save your score!
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 2rem;">
+      <span style="font-size: 11px; color: var(--text-secondary);" id="db-status">Mode: LocalStorage</span>
+      <button class="btn-outline" style="color: var(--red); border-color: var(--red); padding: 0.4rem 0.8rem; font-size: 12px;" onclick="clearLeaderboard()">🧹 Clear Scores</button>
+    </div>
+
+    <div style="text-align: center;">
+      <button class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 15px;" onclick="navigateToPlay()">
+        🎮 Start Playing Now
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const TOPICS = [
+      { id:'ai',          name:'AI Quiz',         icon:'🤖' },
+      { id:'movies',      name:'Movie Quiz',       icon:'🎬' },
+      { id:'coding',      name:'Web Coding',       icon:'💻' },
+      { id:'anime',       name:'Anime Quiz',       icon:'⚡' },
+      { id:'python',      name:'Python',           icon:'🐍' },
+      { id:'ml',          name:'Machine Learning', icon:'📊' },
+      { id:'deeplearning',name:'Deep Learning',    icon:'🧬' },
+      { id:'neural',      name:'Neural Networks',  icon:'🕸️' },
+      { id:'oop',         name:'OOP Concepts',     icon:'🏗️' },
+      { id:'cpp',         name:'C++ Quiz',         icon:'⚙️' },
+      { id:'git',         name:'Git',              icon:'🔀' },
+      { id:'github',      name:'GitHub',           icon:'🐙' },
+      { id:'html',        name:'HTML5',            icon:'🌐' },
+      { id:'css',         name:'CSS3',             icon:'🎨' },
+      { id:'java',        name:'Java',             icon:'☕' },
+      { id:'linux',       name:'Linux',            icon:'🐧' },
+    ];
+
+    // ── LEADERBOARD ENGINE ──
+    let db = null;
+    let firebaseInitialized = false;
+
+    // OPTIONAL FIREBASE CONFIGURATION
+    const FIREBASE_CONFIG = {
+      apiKey: null,
+      authDomain: null,
+      projectId: null,
+      storageBucket: null,
+      messagingSenderId: null,
+      appId: null
+    };
+
+    function initFirebase() {
+      const statusEl = document.getElementById('db-status');
+      if (FIREBASE_CONFIG.projectId) {
+        try {
+          firebase.initializeApp(FIREBASE_CONFIG);
+          db = firebase.firestore();
+          firebaseInitialized = true;
+          if (statusEl) statusEl.textContent = "Mode: Cloud (Firebase)";
+        } catch (e) {
+          console.warn("Firebase initialization failed, falling back to LocalStorage:", e);
+          if (statusEl) statusEl.textContent = "Mode: Local (Fallback)";
+        }
+      } else {
+        if (statusEl) statusEl.textContent = "Mode: LocalStorage";
+      }
+    }
+
+    function populateTopicFilter() {
+      const select = document.getElementById('filter-topic');
+      if (!select) return;
+      select.innerHTML = '<option value="all">All Topics</option>';
+      TOPICS.forEach(t => {
+        select.innerHTML += `<option value="${t.id}">${t.icon} ${t.name}</option>`;
+      });
+    }
+
+    function fetchLeaderboardScores(callback) {
+      if (firebaseInitialized && db) {
+        db.collection('scores').orderBy('score', 'desc').get()
+          .then(snapshot => {
+            let scores = [];
+            snapshot.forEach(doc => {
+              scores.push(doc.data());
+            });
+            callback(scores);
+          })
+          .catch(err => {
+            console.error("Cloud fetch failed, using local storage:", err);
+            let scores = JSON.parse(localStorage.getItem('quizbrain_leaderboard')) || [];
+            callback(scores);
+          });
+      } else {
+        let scores = JSON.parse(localStorage.getItem('quizbrain_leaderboard')) || [];
+        callback(scores);
+      }
+    }
+
+    function renderLeaderboardTable() {
+      const filterTopic = document.getElementById('filter-topic').value;
+      const filterDiff = document.getElementById('filter-diff').value;
+      const tbody = document.getElementById('leaderboard-tbody');
+      const emptyEl = document.getElementById('leaderboard-empty');
+
+      fetchLeaderboardScores(scores => {
+        let filtered = scores.filter(s => {
+          const matchTopic = (filterTopic === 'all' || s.topicId === filterTopic);
+          const matchDiff = (filterDiff === 'all' || s.difficulty === filterDiff);
+          return matchTopic && matchDiff;
+        });
+
+        filtered.sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          if (b.maxStreak !== a.maxStreak) return b.maxStreak - a.maxStreak;
+          return a.totalTime - b.totalTime;
+        });
+
+        filtered = filtered.slice(0, 50);
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          emptyEl.classList.remove('hidden');
+        } else {
+          emptyEl.classList.add('hidden');
+          tbody.innerHTML = filtered.map((s, idx) => {
+            const rank = idx + 1;
+            let rankBadge = `<span class="rank-badge rank-other">${rank}</span>`;
+            if (rank === 1) rankBadge = `<span class="rank-badge rank-1">🏆</span>`;
+            else if (rank === 2) rankBadge = `<span class="rank-badge rank-2">🥈</span>`;
+            else if (rank === 3) rankBadge = `<span class="rank-badge rank-3">🥉</span>`;
+
+            const diffColors = { easy: 'var(--green)', medium: 'var(--amber)', hard: 'var(--red)' };
+            const diffText = s.difficulty.charAt(0).toUpperCase() + s.difficulty.slice(1);
+            
+            return `
+              <tr>
+                <td>${rankBadge}</td>
+                <td style="font-weight:600;">
+                  <span style="display:flex; align-items:center; gap:6px;">
+                    <span>${s.avatar || '🚀'}</span>
+                    <span>${escapeHTML(s.username)}</span>
+                  </span>
+                </td>
+                <td>
+                  <span style="display:flex; align-items:center; gap:4px;">
+                    <span>${s.topicIcon || '🧠'}</span>
+                    <span>${s.topicName || 'General'}</span>
+                    <span style="font-size:10px; padding:1px 5px; border-radius:4px; color:#fff; background:${diffColors[s.difficulty] || 'var(--purple)'};">${diffText}</span>
+                  </span>
+                </td>
+                <td style="text-align:center; font-weight:700; color:var(--purple);">${s.score}/5</td>
+                <td style="text-align:center; font-weight:500;">🔥 ${s.maxStreak}</td>
+                <td style="text-align:center; font-family:'DM Mono',monospace; color:var(--text-secondary);">${s.totalTime}s</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      });
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    function clearLeaderboard() {
+      if (confirm("Are you sure you want to clear your local leaderboard high scores? This will not affect the Cloud database.")) {
+        localStorage.removeItem('quizbrain_leaderboard');
+        renderLeaderboardTable();
+      }
+    }
+
+    function navigateToPlay() {
+      // Directs to play if registered, else index.html
+      const player = localStorage.getItem('quizbrain_current_player');
+      if (player) {
+        location.href = 'quiz.html';
+      } else {
+        location.href = 'index.html';
+      }
+    }
+
+    // On startup
+    window.onload = function() {
+      initFirebase();
+      populateTopicFilter();
+      renderLeaderboardTable();
+    };
+  </script>
+</body>
+</html>
