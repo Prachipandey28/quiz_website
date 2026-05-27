@@ -1,271 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>QuizBrain</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --purple: #534AB7;
-    --purple-light: #EEEDFE;
-    --purple-dark: #3C3489;
-    --green: #3B6D11;
-    --green-light: #EAF3DE;
-    --red: #A32D2D;
-    --red-light: #FCEBEB;
-    --amber: #854F0B;
-    --amber-light: #FAEEDA;
-    --teal: #0F6E56;
-    --teal-light: #E1F5EE;
-    --coral: #993C1D;
-    --coral-light: #FAECE7;
-    --bg: #F7F6F2;
-    --surface: #FFFFFF;
-    --border: rgba(0,0,0,0.1);
-    --border-md: rgba(0,0,0,0.18);
-    --text: #1a1a18;
-    --text-secondary: #6b6b67;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #18181A;
-      --surface: #242428;
-      --border: rgba(255,255,255,0.1);
-      --border-md: rgba(255,255,255,0.18);
-      --text: #F0EFE8;
-      --text-secondary: #8a8a86;
-      --purple-light: #2a2660;
-      --green-light: #1a2e0a;
-      --red-light: #2e1010;
-      --amber-light: #2a1a04;
-      --teal-light: #062e22;
-      --coral-light: #2e1408;
-    }
-  }
-
-  body {
-    font-family: 'Sora', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 2rem 1rem 4rem;
-  }
-
-  .container { width: 100%; max-width: 600px; }
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* ── HOME ── */
-  .brand {
-    display: flex; align-items: center; gap: 8px; margin-bottom: 2rem;
-  }
-  .brand-icon {
-    width: 36px; height: 36px; background: var(--purple); border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; font-size: 18px;
-  }
-  .brand-name { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
-
-  .hero-title {
-    font-size: 36px; font-weight: 700; line-height: 1.15;
-    letter-spacing: -0.03em; margin-bottom: 0.6rem;
-  }
-  .hero-title em { font-style: normal; color: var(--purple); }
-  .hero-sub {
-    font-size: 15px; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;
-  }
-
-  .section-label {
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.75rem;
-  }
-
-  /* Category tabs */
-  .category-tabs {
-    display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap;
-  }
-  .cat-tab {
-    padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border);
-    background: var(--surface); font-family: 'Sora', sans-serif;
-    font-size: 12px; font-weight: 600; color: var(--text-secondary);
-    cursor: pointer; transition: all 0.15s;
-  }
-  .cat-tab:hover { border-color: var(--border-md); color: var(--text); }
-  .cat-tab.active { background: var(--purple); border-color: var(--purple); color: #fff; }
-
-  .topics-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 2rem;
-  }
-
-  .topic-card {
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: var(--radius); padding: 1.1rem 1rem; cursor: pointer;
-    transition: border-color 0.15s, transform 0.12s, box-shadow 0.12s;
-  }
-  .topic-card:hover { transform: translateY(-2px); border-color: var(--border-md); }
-  .topic-card.selected { border: 2px solid var(--purple); }
-  .topic-card.selected .topic-icon-wrap { background: var(--purple-light); }
-
-  .topic-icon-wrap {
-    width: 40px; height: 40px; border-radius: 10px; background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px; margin-bottom: 0.75rem; transition: background 0.15s;
-  }
-  .topic-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-  .topic-meta { font-size: 12px; color: var(--text-secondary); }
-  .topic-tag {
-    display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 600;
-    padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.05em;
-  }
-  .tag-general { background: var(--purple-light); color: var(--purple-dark); }
-  .tag-programming { background: var(--teal-light); color: var(--teal); }
-
-  .difficulty-row {
-    display: flex; gap: 8px; margin-bottom: 2rem;
-  }
-  .diff-btn {
-    flex: 1; background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm); padding: 0.6rem 0.5rem;
-    font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 500;
-    color: var(--text-secondary); cursor: pointer; transition: all 0.15s; text-align: center;
-  }
-  .diff-btn:hover { border-color: var(--border-md); color: var(--text); }
-  .diff-btn.selected { border: 2px solid var(--purple); color: var(--purple); background: var(--purple-light); }
-
-  .start-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  }
-  .hint-text { font-size: 13px; color: var(--text-secondary); }
-
-  .btn-primary {
-    background: var(--purple); color: #fff; border: none; border-radius: var(--radius-sm);
-    padding: 0.7rem 1.6rem; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600;
-    cursor: pointer; transition: opacity 0.15s, transform 0.12s;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn-primary:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
-  .btn-primary:active:not(:disabled) { transform: scale(0.97); }
-  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  .btn-outline {
-    background: transparent; color: var(--text); border: 1.5px solid var(--border-md);
-    border-radius: var(--radius-sm); padding: 0.65rem 1.25rem;
-    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 500;
-    cursor: pointer; transition: background 0.15s;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn-outline:hover { background: var(--bg); }
-
-  /* ── QUIZ ── */
-  .quiz-top {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;
-  }
-  .topic-badge {
-    font-size: 12px; font-weight: 600; padding: 4px 12px;
-    border-radius: 20px; background: var(--purple-light); color: var(--purple-dark);
-  }
-  .timer-wrap { display: flex; align-items: center; gap: 8px; }
-  .timer-ring-wrap { position: relative; width: 42px; height: 42px; }
-  .timer-ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
-  .timer-ring-bg { stroke: var(--border); fill: none; stroke-width: 3; }
-  .timer-ring-fg { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
-  .timer-num {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--text);
-  }
-  .timer-num.urgent { color: var(--red); }
-
-  .progress-bar-wrap {
-    height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 1.75rem; overflow: hidden;
-  }
-  .progress-bar { height: 3px; background: var(--purple); border-radius: 2px; transition: width 0.4s ease; }
-
-  .q-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 500; }
-  .q-text { font-size: 19px; font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; margin-bottom: 1.5rem; }
-
-  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.25rem; }
-
-  .option-btn {
-    background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-    padding: 0.8rem 1rem; text-align: left; font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer;
-    transition: border-color 0.12s, background 0.12s, transform 0.1s;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .option-btn:hover:not(:disabled) { border-color: var(--purple); transform: translateX(3px); }
-  .option-btn:disabled { cursor: default; }
-  .option-btn.correct { background: var(--green-light); border-color: var(--green); color: var(--green); }
-  .option-btn.wrong { background: var(--red-light); border-color: var(--red); color: var(--red); }
-
-  .opt-letter {
-    width: 26px; height: 26px; border-radius: 6px; background: var(--bg);
-    font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; color: var(--text-secondary); transition: background 0.15s, color 0.15s;
-  }
-  .option-btn.correct .opt-letter { background: var(--green); color: #fff; }
-  .option-btn.wrong .opt-letter { background: var(--red); color: #fff; }
-
-  .feedback-bar {
-    font-size: 14px; font-weight: 500; padding: 0.65rem 1rem;
-    border-radius: var(--radius-sm); margin-bottom: 1rem; line-height: 1.5;
-  }
-  .feedback-bar.correct { background: var(--green-light); color: var(--green); }
-  .feedback-bar.wrong { background: var(--red-light); color: var(--red); }
-  .feedback-bar.timeout { background: var(--amber-light); color: var(--amber); }
-
-  .quiz-footer { display: flex; justify-content: flex-end; }
-
-  /* ── RESULTS ── */
-  .result-wrap { padding: 2rem 0; text-align: center; }
-  .result-emoji { font-size: 60px; margin-bottom: 1rem; }
-  .result-score { font-size: 52px; font-weight: 700; letter-spacing: -0.04em; color: var(--purple); margin-bottom: 0.2rem; }
-  .result-topic { font-size: 14px; color: var(--text-secondary); margin-bottom: 0.4rem; }
-  .result-msg { font-size: 18px; font-weight: 600; margin-bottom: 1.75rem; }
-
-  .stats-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-    max-width: 420px; margin: 0 auto 2rem;
-  }
-  .stat-card {
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm); padding: 0.75rem 0.5rem;
-  }
-  .stat-num { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
-  .stat-lbl { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
-  .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-
-  /* hidden utility */
-  .hidden { display: none !important; }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .screen.active { animation: fadeIn 0.25s ease; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
-  .shake { animation: shake 0.35s ease; }
-  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.06)} 100%{transform:scale(1)} }
-  .pop { animation: pop 0.25s ease; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuizBrain - Play Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div class="container">
 
-  <!-- HOME -->
-  <div id="home-screen" class="screen active">
-    <div class="brand">
-      <div class="brand-icon">🧠</div>
-      <span class="brand-name">QuizBrain</span>
+  <!-- ACTIVE PLAYER HEADER -->
+  <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span id="player-avatar" style="font-size: 22px;">🚀</span>
+      <span style="font-size: 13px; font-weight: 600;">Playing as: <span id="player-name" style="color:var(--purple);">Guest</span></span>
     </div>
-    <h1 class="hero-title">Test your <em>knowledge</em>.<br>Beat the clock.</h1>
-    <p class="hero-sub">Pick a topic, choose your difficulty, and answer 5 questions before time runs out.</p>
+    <button class="btn-header-leaderboard" style="padding: 4px 10px; font-size: 11px;" onclick="switchPlayer()">👤 Change Player</button>
+  </div>
+
+  <!-- HOME (SELECTION SCREEN) -->
+  <div id="home-screen" class="screen active">
+    <div class="brand" style="justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="brand-icon">🧠</div>
+        <span class="brand-name">QuizBrain</span>
+      </div>
+      <button class="btn-header-leaderboard" onclick="location.href='leaderboard.html'">🏆 Leaderboard</button>
+    </div>
+    <h1 class="hero-title">Select your <em>topic</em>.</h1>
+    <p class="hero-sub">Pick a topic below, choose your difficulty, and answer 5 questions before time runs out.</p>
 
     <div class="section-label">Category</div>
     <div class="category-tabs">
@@ -289,7 +56,7 @@
     </div>
   </div>
 
-  <!-- QUIZ -->
+  <!-- QUIZ GAMEPLAY SCREEN -->
   <div id="quiz-screen" class="screen">
     <div style="padding-top:1.5rem;">
       <div class="quiz-top">
@@ -319,13 +86,14 @@
     </div>
   </div>
 
-  <!-- RESULTS -->
+  <!-- RESULTS SCREEN -->
   <div id="result-screen" class="screen">
     <div class="result-wrap">
       <div class="result-emoji" id="result-emoji">🎉</div>
       <div class="result-score" id="result-score">4/5</div>
       <div class="result-topic" id="result-topic">Quiz · Medium</div>
       <div class="result-msg" id="result-msg">Great job!</div>
+      
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-num" id="s-correct" style="color:var(--green);">0</div>
@@ -344,8 +112,17 @@
           <div class="stat-lbl">Score</div>
         </div>
       </div>
+
+      <!-- AUTO-SAVE SCORE CARD -->
+      <div class="save-score-card" id="save-score-panel" style="display:none; text-align: center; background: var(--green-light); border-color: var(--green); color: var(--green); margin-bottom: 2rem;">
+        <div style="font-size: 28px; margin-bottom: 0.5rem;">🎉</div>
+        <h3 style="color: var(--green); margin-bottom: 0.25rem;">Score Automatically Saved!</h3>
+        <p style="color: var(--green); font-size: 13px; margin-bottom: 0.5rem;" id="auto-save-message">Your results have been posted to the leaderboard under your profile.</p>
+        <button class="btn-primary" style="background: var(--green); color: #fff; padding: 0.5rem 1.25rem; font-size: 13px; margin-top: 0.25rem;" onclick="location.href='leaderboard.html'">🏆 View Rankings</button>
+      </div>
+
       <div class="result-actions">
-        <button class="btn-outline" onclick="goHome()">🏠 Home</button>
+        <button class="btn-outline" onclick="goHome()">🏠 Selection</button>
         <button class="btn-primary" onclick="retryQuiz()">↺ Try Again</button>
       </div>
     </div>
@@ -482,8 +259,6 @@ const QUESTIONS = {
     { q:'What is Luffy\'s dream in "One Piece"?', opts:['To become the strongest swordsman','To find the All Blue','To become King of the Pirates','To return to his hometown'], ans:2 },
     { q:'In "My Hero Academia", what is the name of the top hero (All Might\'s successor)?', opts:['Bakugo','Todoroki','Deku (Izuku Midoriya)','Kirishima'], ans:2 }
   ],
-
-  // ── PYTHON ──
   python: [
     { q:'What is the output of: type([]) in Python?', opts:["<class 'list'>","<class 'array'>","<class 'tuple'>","<class 'dict'>"], ans:0 },
     { q:'Which keyword is used to define a function in Python?', opts:['function','func','define','def'], ans:3 },
@@ -496,8 +271,6 @@ const QUESTIONS = {
     { q:'What does "PEP 8" refer to in Python?', opts:['A Python version','Python\'s style guide','A machine learning library','A Python error code'], ans:1 },
     { q:'Which Python library is primarily used for data manipulation and analysis?', opts:['NumPy','Matplotlib','Pandas','SciPy'], ans:2 }
   ],
-
-  // ── MACHINE LEARNING ──
   ml: [
     { q:'What is the purpose of a "training set" in machine learning?', opts:['To test final model accuracy','To tune hyperparameters','To train the model on labeled data','To deploy the model'], ans:2 },
     { q:'What does "regularization" help prevent in ML models?', opts:['Underfitting','Overfitting','Slow training','High bias'], ans:1 },
@@ -510,8 +283,6 @@ const QUESTIONS = {
     { q:'What does PCA stand for?', opts:['Predictive Classification Algorithm','Principal Component Analysis','Partial Correlation Approach','Probabilistic Clustering Algorithm'], ans:1 },
     { q:'Which type of learning does a recommendation system typically use?', opts:['Supervised learning','Unsupervised learning','Reinforcement learning','Collaborative filtering'], ans:3 }
   ],
-
-  // ── DEEP LEARNING ──
   deeplearning: [
     { q:'Which framework, developed by Google, is most widely used for deep learning?', opts:['PyTorch','Keras','TensorFlow','Scikit-learn'], ans:2 },
     { q:'What is an "epoch" in deep learning training?', opts:['One forward pass through a single sample','One full pass through the entire training dataset','One weight update step','One layer of the network'], ans:1 },
@@ -524,8 +295,6 @@ const QUESTIONS = {
     { q:'What does a "loss function" measure?', opts:['Model size in memory','Difference between predictions and actual values','Number of trainable parameters','Learning rate decay'], ans:1 },
     { q:'Which optimizer adapts the learning rate for each parameter individually?', opts:['SGD','Adam','Momentum','Gradient Descent'], ans:1 }
   ],
-
-  // ── NEURAL NETWORKS ──
   neural: [
     { q:'What is the basic computational unit of a neural network?', opts:['Node','Neuron (Perceptron)','Weight','Layer'], ans:1 },
     { q:'In a neural network, what does "backpropagation" do?', opts:['Feeds data forward through layers','Computes gradients and updates weights using chain rule','Randomly initializes weights','Normalizes input data'], ans:1 },
@@ -538,8 +307,6 @@ const QUESTIONS = {
     { q:'What is "transfer learning" in neural networks?', opts:['Moving a model to different hardware','Using a pre-trained model\'s weights as a starting point for a new task','Training two models simultaneously','Transferring data between layers'], ans:1 },
     { q:'What problem do residual connections (ResNets) solve?', opts:['Overfitting in small datasets','Vanishing gradient problem in very deep networks','Slow inference speed','High memory usage during deployment'], ans:1 }
   ],
-
-  // ── OOP ──
   oop: [
     { q:'What are the four main pillars of Object-Oriented Programming?', opts:['Loops, Functions, Classes, Objects','Encapsulation, Abstraction, Inheritance, Polymorphism','Variables, Methods, Interfaces, Structs','Compilation, Linking, Loading, Execution'], ans:1 },
     { q:'What is "encapsulation" in OOP?', opts:['Inheriting methods from a parent class','Bundling data and methods that operate on it within a class','Creating multiple objects from one class','Overriding parent class methods'], ans:1 },
@@ -550,8 +317,6 @@ const QUESTIONS = {
     { q:'What is a "constructor" in OOP?', opts:['A method to destroy objects','A special method called when an object is created to initialize it','A method that returns the class type','A static method used for utility functions'], ans:1 },
     { q:'What is the "interface" concept in OOP?', opts:['A graphical user interface','A contract defining method signatures a class must implement','A base class with default methods','A way to instantiate abstract classes'], ans:1 }
   ],
-
-  // ── C++ ──
   cpp: [
     { q:'What is the correct way to declare a pointer to an integer in C++?', opts:['int &p;','int p*;','int *p;','pointer int p;'], ans:2 },
     { q:'What does the "new" keyword do in C++?', opts:['Declares a new variable','Allocates memory on the heap and returns a pointer','Allocates memory on the stack','Creates a new class'], ans:1 },
@@ -569,13 +334,16 @@ const QUESTIONS = {
 let selectedTopic = null, selectedDiff = 'easy', activeCategory = 'all';
 let questions = [], current = 0, score = 0, answered = false;
 let timerInterval = null, timeLeft = 0, totalTimeUsed = 0;
+let currentStreak = 0, maxStreak = 0;
+
+let currentPlayerName = '';
+let currentPlayerAvatar = '🚀';
 
 function filterCategory(cat) {
   activeCategory = cat;
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
 
-  // Deselect topic if it's no longer visible
   if (selectedTopic) {
     const t = TOPICS.find(t => t.id === selectedTopic);
     if (cat !== 'all' && t.category !== cat) {
@@ -620,6 +388,7 @@ function startQuiz() {
   if (!selectedTopic) return;
   questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
   current = 0; score = 0; totalTimeUsed = 0; answered = false;
+  currentStreak = 0; maxStreak = 0;
   showScreen('quiz-screen');
   renderQuestion();
 }
@@ -673,6 +442,7 @@ function updateTimer(t, total) {
 
 function onTimeout() {
   answered = true;
+  currentStreak = 0;
   const q = questions[current];
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
   document.getElementById('opt-' + q.ans).classList.add('correct');
@@ -696,11 +466,14 @@ function selectAnswer(idx) {
   if (idx === q.ans) {
     chosen.classList.add('correct', 'pop');
     score++;
+    currentStreak++;
+    maxStreak = Math.max(maxStreak, currentStreak);
     fb.className = 'feedback-bar correct';
     fb.textContent = '✓ Correct!';
   } else {
     chosen.classList.add('wrong', 'shake');
     document.getElementById('opt-' + q.ans).classList.add('correct');
+    currentStreak = 0;
     fb.className = 'feedback-bar wrong';
     fb.textContent = `✗ Incorrect. The answer was: ${q.opts[q.ans]}`;
   }
@@ -738,17 +511,116 @@ function showResults() {
   document.getElementById('s-wrong').textContent = wrong;
   document.getElementById('s-time').textContent = avgTime + 's';
   document.getElementById('s-pct').textContent = pct + '%';
+
+  // Populate auto-save message and perform submission
+  const savePanel = document.getElementById('save-score-panel');
+  if (savePanel) {
+    savePanel.style.display = 'block';
+    const msgEl = document.getElementById('auto-save-message');
+    if (msgEl) {
+      msgEl.textContent = `Your results have been automatically posted to the leaderboard under the profile: ${currentPlayerAvatar} ${currentPlayerName}`;
+    }
+  }
+
+  saveScore(currentPlayerName, currentPlayerAvatar, score, maxStreak, totalTimeUsed);
 }
 
-function goHome() { clearInterval(timerInterval); showScreen('home-screen'); }
+function goHome() { 
+  clearInterval(timerInterval); 
+  selectedTopic = null;
+  document.getElementById('start-btn').disabled = true;
+  document.getElementById('select-hint').textContent = 'Select a topic to begin';
+  // Clear grids selected state
+  document.querySelectorAll('.topic-card').forEach(c => c.classList.remove('selected'));
+  showScreen('home-screen'); 
+}
+
 function retryQuiz() {
   current = 0; score = 0; totalTimeUsed = 0;
+  currentStreak = 0; maxStreak = 0;
   questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
   showScreen('quiz-screen');
   renderQuestion();
 }
 
-renderTopics();
+// ── LEADERBOARD ENGINE ──
+let db = null;
+let firebaseInitialized = false;
+
+// OPTIONAL FIREBASE CONFIGURATION
+const FIREBASE_CONFIG = {
+  apiKey: null,
+  authDomain: null,
+  projectId: null,
+  storageBucket: null,
+  messagingSenderId: null,
+  appId: null
+};
+
+function initFirebase() {
+  if (FIREBASE_CONFIG.projectId) {
+    try {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.firestore();
+      firebaseInitialized = true;
+    } catch (e) {
+      console.warn("Firebase initialization failed, falling back to LocalStorage:", e);
+    }
+  }
+}
+
+function saveScore(username, avatar, score, maxStreak, totalTime) {
+  const t = TOPICS.find(t => t.id === selectedTopic);
+  const entry = {
+    username: username,
+    avatar: avatar || '🚀',
+    topicId: selectedTopic,
+    topicName: t ? t.name : 'Unknown',
+    topicIcon: t ? t.icon : '🧠',
+    difficulty: selectedDiff,
+    score: score,
+    maxStreak: maxStreak,
+    totalTime: totalTime,
+    timestamp: Date.now()
+  };
+
+  let localLeaderboard = JSON.parse(localStorage.getItem('quizbrain_leaderboard')) || [];
+  localLeaderboard.push(entry);
+  localStorage.setItem('quizbrain_leaderboard', JSON.stringify(localLeaderboard));
+
+  if (firebaseInitialized && db) {
+    db.collection('scores').add(entry)
+      .then(() => console.log("Score uploaded to Cloud!"))
+      .catch((err) => console.error("Error writing score to Cloud:", err));
+  }
+}
+
+function checkActiveProfile() {
+  const player = localStorage.getItem('quizbrain_current_player');
+  if (!player) {
+    // No registered player, send to landing setup page
+    location.href = 'index.html';
+    return;
+  }
+  const parsed = JSON.parse(player);
+  currentPlayerName = parsed.name || 'Guest';
+  currentPlayerAvatar = parsed.avatar || '🚀';
+  
+  document.getElementById('player-name').textContent = currentPlayerName;
+  document.getElementById('player-avatar').textContent = currentPlayerAvatar;
+}
+
+function switchPlayer() {
+  localStorage.removeItem('quizbrain_current_player');
+  location.href = 'index.html';
+}
+
+// Startup Initialization
+window.onload = function() {
+  checkActiveProfile();
+  initFirebase();
+  renderTopics();
+};
 </script>
 </body>
 </html>
