@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to QuizBrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container" style="padding-top: 3rem;">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+      <div class="brand" style="justify-content: center; margin-bottom: 1rem;">
+        <div class="brand-icon" style="width: 48px; height: 48px; font-size: 24px; border-radius: 12px;">🧠</div>
+        <span class="brand-name" style="font-size: 26px;">QuizBrain</span>
+      </div>
+      <h1 class="hero-title" style="font-size: 32px; letter-spacing: -0.02em;">Ready to test your <em>brain</em>?</h1>
+      <p class="hero-sub">Register your player profile below to start your timed knowledge battles and save your rank on the leaderboards.</p>
+    </div>
+
+    <div class="player-profile-card" style="background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 8px 30px rgba(0,0,0,0.03);">
+      <div class="section-label" style="margin-bottom: 1rem;">Player Setup</div>
+      
+      <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 1.5rem;">
+        <div id="selected-avatar-preview" style="font-size: 30px; width: 56px; height: 56px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--border); transition: background 0.15s;">🚀</div>
+        <div style="flex: 1;">
+          <label for="player-username" style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 6px;">Your Username</label>
+          <input type="text" id="player-username" class="username-input" placeholder="Type name here..." style="width: 100%;" maxlength="15" oninput="validateInput()">
+        </div>
+      </div>
+
+      <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.75rem;">Choose Avatar</div>
+      <div style="display: flex; gap: 8px; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span class="avatar-option active" data-avatar="🚀" onclick="selectAvatar('🚀')">🚀</span>
+        <span class="avatar-option" data-avatar="🧙‍♂️" onclick="selectAvatar('🧙‍♂️')">🧙‍♂️</span>
+        <span class="avatar-option" data-avatar="🦊" onclick="selectAvatar('🦊')">🦊</span>
+        <span class="avatar-option" data-avatar="🤖" onclick="selectAvatar('🤖')">🤖</span>
+        <span class="avatar-option" data-avatar="🦸‍♂️" onclick="selectAvatar('🦸‍♂️')">🦸‍♂️</span>
+        <span class="avatar-option" data-avatar="🐱" onclick="selectAvatar('🐱')">🐱</span>
+      </div>
+    </div>
+
+    <div style="text-align: center;">
+      <button class="btn-primary" id="proceed-btn" style="width: 100%; justify-content: center; padding: 0.9rem; font-size: 16px;" onclick="registerPlayer()" disabled>
+        Proceed to Quiz Room →
+      </button>
+      <button class="btn-outline" style="width: 100%; justify-content: center; margin-top: 10px; font-size: 14px;" onclick="location.href='leaderboard.html'">
+        🏆 View Standings
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let selectedAvatar = '🚀';
+
+    function selectAvatar(emoji) {
+      selectedAvatar = emoji;
+      document.querySelectorAll('.avatar-option').forEach(el => {
+        if (el.getAttribute('data-avatar') === emoji) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+      const preview = document.getElementById('selected-avatar-preview');
+      if (preview) preview.textContent = emoji;
+    }
+
+    function validateInput() {
+      const username = document.getElementById('player-username').value.trim();
+      const proceedBtn = document.getElementById('proceed-btn');
+      proceedBtn.disabled = (username.length === 0);
+    }
+
+    function registerPlayer() {
+      const usernameInput = document.getElementById('player-username');
+      const username = usernameInput.value.trim();
+      if (!username) {
+        usernameInput.classList.add('shake');
+        setTimeout(() => usernameInput.classList.remove('shake'), 400);
+        return;
+      }
+
+      // Store player profile details
+      const playerProfile = {
+        name: username,
+        avatar: selectedAvatar
+      };
+      
+      localStorage.setItem('quizbrain_current_player', JSON.stringify(playerProfile));
+      localStorage.setItem('quizbrain_last_username', username);
+      localStorage.setItem('quizbrain_last_avatar', selectedAvatar);
+
+      // Redirect to play room
+      location.href = 'quiz.html';
+    }
+
+    // On startup
+    window.onload = function() {
+      const savedUser = localStorage.getItem('quizbrain_last_username') || '';
+      const savedAvatar = localStorage.getItem('quizbrain_last_avatar') || '🚀';
+      
+      if (savedUser) {
+        document.getElementById('player-username').value = savedUser;
+        validateInput();
+      }
+      selectAvatar(savedAvatar);
+    };
+  </script>
+</body>
+</html>
