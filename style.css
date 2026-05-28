@@ -25,7 +25,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #18181A;
     --surface: #242428;
     --border: rgba(255,255,255,0.1);
@@ -39,6 +39,21 @@
     --teal-light: #062e22;
     --coral-light: #2e1408;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #18181A;
+  --surface: #242428;
+  --border: rgba(255,255,255,0.1);
+  --border-md: rgba(255,255,255,0.18);
+  --text: #F0EFE8;
+  --text-secondary: #8a8a86;
+  --purple-light: #2a2660;
+  --green-light: #1a2e0a;
+  --red-light: #2e1010;
+  --amber-light: #2a1a04;
+  --teal-light: #062e22;
+  --coral-light: #2e1408;
 }
 
 body {
@@ -525,10 +540,15 @@ body {
   color: var(--purple-dark);
 }
 @media (prefers-color-scheme: dark) {
-  .locked-overlay {
+  :root:not([data-theme="light"]) .locked-overlay {
     background: rgba(36, 36, 40, 0.88);
     color: var(--purple-light);
   }
+}
+
+:root[data-theme="dark"] .locked-overlay {
+  background: rgba(36, 36, 40, 0.88);
+  color: var(--purple-light);
 }
 
 .battle-bar-wrap {
@@ -627,6 +647,48 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   box-shadow: 0 2px 6px rgba(83, 74, 183, 0.3);
+}
+
+/* ── THEME TOGGLE STYLES ── */
+.theme-toggle {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+}
+
+.theme-toggle-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border-md);
+  color: var(--text);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 18px;
+  outline: none;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.1) rotate(15deg);
+  border-color: var(--purple);
+  box-shadow: 0 6px 16px rgba(83, 74, 183, 0.22);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .theme-toggle {
+    top: 1rem;
+    right: 1rem;
+  }
 }
 
 
