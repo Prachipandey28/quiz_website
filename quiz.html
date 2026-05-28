@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="style.css" />
   <script src="theme.js"></script>
   <script src="badges.js"></script>
+  <script src="sound.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -760,6 +762,10 @@ function updateTimer(t, total) {
 function onTimeout() {
   answered = true;
   currentStreak = 0;
+  
+  // Play synthesized wrong buzzer sound on timeout
+  if (typeof playWrongSound === 'function') playWrongSound();
+  
   const q = questions[current];
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
   const correctOpt = document.getElementById('opt-' + q.ans);
@@ -785,6 +791,10 @@ function selectAnswer(idx) {
   const fb = document.getElementById('feedback');
   if (idx === q.ans) {
     if (chosen) chosen.classList.add('correct', 'pop');
+    
+    // Play synthesized rising chime for correct answer
+    if (typeof playCorrectSound === 'function') playCorrectSound();
+    
     score++;
     currentStreak++;
     maxStreak = Math.max(maxStreak, currentStreak);
@@ -794,6 +804,10 @@ function selectAnswer(idx) {
     }
   } else {
     if (chosen) chosen.classList.add('wrong', 'shake');
+    
+    // Play synthesized buzzer for incorrect answer
+    if (typeof playWrongSound === 'function') playWrongSound();
+    
     const correctOpt = document.getElementById('opt-' + q.ans);
     if (correctOpt) correctOpt.classList.add('correct');
     currentStreak = 0;
@@ -1131,8 +1145,29 @@ function showResults() {
       if (newBadges.length > 0 && !isMultiplayer) {
         celebrateContainer.innerHTML = newBadges.map(b => generateBadgePillHTML(b)).join('');
         celebratePanel.style.display = 'block';
+        
+        // Play triumphant unlock sound
+        if (typeof playUnlockSound === 'function') playUnlockSound();
+        
+        // Burst of celebratory confetti!
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.65 }
+          });
+        }
       } else {
         celebratePanel.style.display = 'none';
+        
+        // Perfect 5/5 score confetti (if no new badge is unlocked to celebrate)
+        if (score === 5 && !isMultiplayer && typeof confetti === 'function') {
+          confetti({
+            particleCount: 100,
+            spread: 60,
+            origin: { y: 0.65 }
+          });
+        }
       }
     }
     
