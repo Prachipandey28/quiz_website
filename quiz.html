@@ -754,6 +754,13 @@ function updateTimer(t, total) {
   if (!ring || !numEl) return;
   ring.style.strokeDashoffset = offset;
   numEl.textContent = t;
+  
+  // Dynamically flash and pulse the wrapper parent when time is urgent
+  const wrap = ring.closest('.timer-ring-wrap');
+  if (wrap) {
+    wrap.classList.toggle('urgent', t <= 5);
+  }
+  
   if (t <= 5) { ring.style.stroke = '#E24B4A'; numEl.classList.add('urgent'); }
   else if (t <= Math.floor(total * 0.4)) { ring.style.stroke = '#BA7517'; numEl.classList.remove('urgent'); }
   else { ring.style.stroke = '#534AB7'; numEl.classList.remove('urgent'); }
@@ -762,6 +769,13 @@ function updateTimer(t, total) {
 function onTimeout() {
   answered = true;
   currentStreak = 0;
+  
+  // Physical shake effect on circular timer container
+  const wrap = document.querySelector('.timer-ring-wrap');
+  if (wrap) {
+    wrap.classList.add('shake');
+    setTimeout(() => wrap.classList.remove('shake'), 400);
+  }
   
   // Play synthesized wrong buzzer sound on timeout
   if (typeof playWrongSound === 'function') playWrongSound();
