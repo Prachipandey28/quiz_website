@@ -777,4 +777,23 @@ body {
 :root[data-theme="dark"] .badge-coral { background: #2E0E08; color: #FFA391; }
 :root[data-theme="dark"] .badge-amber { background: #2E1F07; color: #FFDB8B; }
 
+/* ── URGENT TIMER WARNING ANIMATIONS ── */
+@keyframes timerFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.timer-ring-wrap {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.timer-ring-wrap.urgent {
+  animation: timerPulse 0.8s ease-in-out infinite, timerFlash 0.8s ease-in-out infinite;
+}
+
 
