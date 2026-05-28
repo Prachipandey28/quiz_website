@@ -691,4 +691,15 @@ body {
   }
 }
 
+/* ── ANALYTICS DASHBOARD ── */
+.analytics-dashboard {
+  animation: fadeIn 0.4s ease;
+}
+
+@media (max-width: 500px) {
+  .analytics-grid-two {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 
