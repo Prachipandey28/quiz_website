@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="theme.js"></script>
+  <script src="badges.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
@@ -182,14 +183,24 @@
             const diffText = s.difficulty.charAt(0).toUpperCase() + s.difficulty.slice(1);
             
             const dailyBadge = s.isDaily ? `<span class="badge-daily" style="font-size:8px; padding:1.5px 5px; border-radius:3px; font-weight:700; letter-spacing:0.04em; margin-left:4px;">Daily</span>` : '';
+            
+            // Calculate earned badges for the leaderboard row
+            const earnedBadges = typeof calculateEarnedBadges === 'function' ? calculateEarnedBadges(s.username) : [];
+            const badgesHTML = earnedBadges.map(b => `
+              <span title="${b.name}: ${b.desc}" style="cursor:help; margin-left: 3px; font-size:12px; display: inline-flex; align-items: center;" class="pop-hover">
+                ${b.emoji}
+              </span>
+            `).join('');
+
             return `
               <tr>
                 <td>${rankBadge}</td>
                 <td style="font-weight:600;">
-                  <span style="display:flex; align-items:center; gap:6px;">
+                  <span style="display:flex; align-items:center; gap:6px; flex-wrap: wrap;">
                     <span>${s.avatar || '🚀'}</span>
                     <span>${escapeHTML(s.username)}</span>
                     ${dailyBadge}
+                    <span style="display:inline-flex; align-items:center; margin-left:2px;">${badgesHTML}</span>
                   </span>
                 </td>
                 <td>

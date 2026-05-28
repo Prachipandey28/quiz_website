@@ -702,4 +702,79 @@ body {
   }
 }
 
+/* ── ACHIEVEMENT BADGE PILLS ── */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  border-radius: 20px;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: help;
+  user-select: none;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.badge-pill-md {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.badge-pill-sm {
+  padding: 2px 7px;
+  font-size: 9px;
+  gap: 3px;
+}
+
+.badge-pill:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Badge Color Grades */
+.badge-bronze {
+  background: #FDF3E7;
+  color: #8C5920;
+}
+.badge-purple {
+  background: #F5EFFF;
+  color: #6C38C2;
+}
+.badge-teal {
+  background: #E8F9F5;
+  color: #0E7362;
+}
+.badge-gold {
+  background: #FFFDF0;
+  color: #9C7E00;
+  border-color: rgba(255, 215, 0, 0.3);
+  box-shadow: 0 2px 6px rgba(255, 215, 0, 0.1);
+}
+.badge-coral {
+  background: #FFF3F0;
+  color: #C23B1D;
+}
+.badge-amber {
+  background: #FFF8E6;
+  color: #A36A00;
+}
+
+/* Dark theme support overrides for badges */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .badge-bronze { background: #2A1A0C; color: #E3AF7D; }
+  :root:not([data-theme="light"]) .badge-purple { background: #1B0F2E; color: #C29FFF; }
+  :root:not([data-theme="light"]) .badge-teal { background: #07221E; color: #8BEBE1; }
+  :root:not([data-theme="light"]) .badge-gold { background: #2A240C; color: #FFE782; }
+  :root:not([data-theme="light"]) .badge-coral { background: #2E0E08; color: #FFA391; }
+  :root:not([data-theme="light"]) .badge-amber { background: #2E1F07; color: #FFDB8B; }
+}
+
+:root[data-theme="dark"] .badge-bronze { background: #2A1A0C; color: #E3AF7D; }
+:root[data-theme="dark"] .badge-purple { background: #1B0F2E; color: #C29FFF; }
+:root[data-theme="dark"] .badge-teal { background: #07221E; color: #8BEBE1; }
+:root[data-theme="dark"] .badge-gold { background: #2A240C; color: #FFE782; }
+:root[data-theme="dark"] .badge-coral { background: #2E0E08; color: #FFA391; }
+:root[data-theme="dark"] .badge-amber { background: #2E1F07; color: #FFDB8B; }
+
 

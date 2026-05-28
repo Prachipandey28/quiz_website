@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="theme.js"></script>
+  <script src="badges.js"></script>
 </head>
 <body>
   <div class="container" style="padding-top: 2rem;">
@@ -71,13 +72,19 @@
       </div>
 
       <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.6rem;">Choose Avatar</div>
-      <div style="display: flex; gap: 8px; justify-content: space-between;">
+      <div style="display: flex; gap: 8px; justify-content: space-between; margin-bottom: 1.25rem;">
         <span class="avatar-option p1-opt active" data-avatar="🚀" onclick="selectAvatar(1, '🚀')">🚀</span>
         <span class="avatar-option p1-opt" data-avatar="🧙‍♂️" onclick="selectAvatar(1, '🧙‍♂️')">🧙‍♂️</span>
         <span class="avatar-option p1-opt" data-avatar="🦊" onclick="selectAvatar(1, '🦊')">🦊</span>
         <span class="avatar-option p1-opt" data-avatar="🤖" onclick="selectAvatar(1, '🤖')">🤖</span>
         <span class="avatar-option p1-opt" data-avatar="🦸‍♂️" onclick="selectAvatar(1, '🦸‍♂️')">🦸‍♂️</span>
         <span class="avatar-option p1-opt" data-avatar="🐱" onclick="selectAvatar(1, '🐱')">🐱</span>
+      </div>
+
+      <!-- Earned Badges Row -->
+      <div id="p1-badges-row" style="display: none; border-top: 1.5px solid var(--border); padding-top: 1rem;">
+        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.5rem;">Earned Badges 🥇</div>
+        <div id="p1-badges-container" style="display: flex; gap: 6px; flex-wrap: wrap;"></div>
       </div>
     </div>
 
@@ -266,6 +273,11 @@
       const p1Name = document.getElementById('p1-username').value.trim();
       const p2Name = document.getElementById('p2-username').value.trim();
       const proceedBtn = document.getElementById('proceed-btn');
+      
+      // Update earned badges preview dynamically
+      if (typeof renderPlayerBadges === 'function') {
+        renderPlayerBadges(p1Name, 'p1-badges-container', 'p1-badges-row');
+      }
       
       document.getElementById('p1-preview-name').textContent = p1Name;
       document.getElementById('p2-preview-name').textContent = p2Name;

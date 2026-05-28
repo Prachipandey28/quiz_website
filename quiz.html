@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="theme.js"></script>
+  <script src="badges.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -153,6 +154,14 @@
         </div>
       </div>
 
+      <!-- NEW ACHIEVEMENTS UNLOCKED CELEBRATION -->
+      <div id="unlocked-badges-panel" style="display: none; background: linear-gradient(135deg, var(--purple-light), var(--teal-light)); border: 1.5px solid var(--purple); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; text-align: center; box-shadow: 0 8px 30px rgba(83, 74, 183, 0.15); animation: pop 0.4s ease;">
+        <div style="font-size: 28px; margin-bottom: 0.5rem; animation: pop 0.5s ease;">🎉</div>
+        <h3 style="color: var(--purple-dark); font-size: 15px; font-weight: 700; margin-bottom: 0.25rem;">Achievement Unlocked!</h3>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 0.75rem;">Your high performance has earned you new badges!</p>
+        <div id="unlocked-badges-container" style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;"></div>
+      </div>
+
       <!-- AUTO-SAVE SCORE CARD -->
       <div class="save-score-card" id="save-score-panel" style="display:none; text-align: center; background: var(--green-light); border-color: var(--green); color: var(--green); margin-bottom: 2rem;">
         <div style="font-size: 28px; margin-bottom: 0.5rem;">🎉</div>
@@ -203,6 +212,15 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- ALL BADGES SHOWCASE CABINET -->
+      <div id="all-badges-showcase" style="display: none; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-top: 1.5rem; margin-bottom: 2rem; text-align: left; box-shadow: 0 8px 30px rgba(0,0,0,0.02);">
+        <h3 style="font-size: 14px; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px; color: var(--teal);">
+          🏆 Earned Badges Cabinet
+        </h3>
+        <p style="font-size: 11px; color: var(--text-secondary); margin-bottom: 1rem;">Here are all the achievement badges earned by your profile:</p>
+        <div id="all-badges-container" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
       </div>
 
       <div class="result-actions">
@@ -516,6 +534,9 @@ function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
 function startQuiz() {
   if (!selectedTopic) return;
+  const celebratePanel = document.getElementById('unlocked-badges-panel');
+  if (celebratePanel) celebratePanel.style.display = 'none';
+  
   questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
   current = 0; score = 0; totalTimeUsed = 0; answered = false;
   currentStreak = 0; maxStreak = 0;
@@ -1089,8 +1110,44 @@ function showResults() {
     localStorage.setItem('quizbrain_daily_attempts', JSON.stringify(attempts));
   }
 
+  // Calculate badges before saving the score
+  let badgesBefore = [];
+  if (typeof calculateEarnedBadges === 'function') {
+    badgesBefore = calculateEarnedBadges(currentPlayerName).map(b => b.id);
+  }
+
   saveScore(currentPlayerName, currentPlayerAvatar, score, maxStreak, totalTimeUsed);
   renderAnalyticsDashboard();
+
+  // Process and animate badge achievements
+  if (typeof calculateEarnedBadges === 'function' && typeof generateBadgePillHTML === 'function') {
+    const badgesAfter = calculateEarnedBadges(currentPlayerName);
+    const newBadges = badgesAfter.filter(b => !badgesBefore.includes(b.id));
+    
+    // Celebratory popup for new badges
+    const celebratePanel = document.getElementById('unlocked-badges-panel');
+    const celebrateContainer = document.getElementById('unlocked-badges-container');
+    if (celebratePanel && celebrateContainer) {
+      if (newBadges.length > 0 && !isMultiplayer) {
+        celebrateContainer.innerHTML = newBadges.map(b => generateBadgePillHTML(b)).join('');
+        celebratePanel.style.display = 'block';
+      } else {
+        celebratePanel.style.display = 'none';
+      }
+    }
+    
+    // Complete cabinet display
+    const cabinetPanel = document.getElementById('all-badges-showcase');
+    const cabinetContainer = document.getElementById('all-badges-container');
+    if (cabinetPanel && cabinetContainer) {
+      if (badgesAfter.length > 0 && !isMultiplayer) {
+        cabinetContainer.innerHTML = badgesAfter.map(b => generateBadgePillHTML(b)).join('');
+        cabinetPanel.style.display = 'block';
+      } else {
+        cabinetPanel.style.display = 'none';
+      }
+    }
+  }
 }
 
 function renderAnalyticsDashboard() {
