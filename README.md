@@ -223,25 +223,25 @@ quiz_website/
 
 ## 🏠 Home Lobby
 
-(Add Screenshot)
+<img width="1175" height="763" alt="Screenshot 2026-05-28 at 3 46 02 PM" src="https://github.com/user-attachments/assets/4fc39e5e-0255-4d2e-bd02-bcddc1baff84" />
 
 ---
 
 ## ⚔️ Multiplayer Battle Arena
 
-(Add Screenshot)
+![Battle Arena](screenshots/battle.png)
 
 ---
 
 ## 📊 Analytics Dashboard
 
-(Add Screenshot)
+![Analytics Dashboard](screenshots/analytics.png)
 
 ---
 
 ## 🏆 Leaderboard
 
-(Add Screenshot)
+![Leaderboard](screenshots/leaderboard.png)
 
 ---
 
