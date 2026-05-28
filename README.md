@@ -229,19 +229,21 @@ quiz_website/
 
 ## ⚔️ Multiplayer Battle Arena
 
-![Battle Arena](screenshots/battle.png)
+<img width="805" height="782" alt="Screenshot 2026-05-28 at 3 48 00 PM" src="https://github.com/user-attachments/assets/1796beac-e217-4c02-a885-85315e587cba" />
 
 ---
 
 ## 📊 Analytics Dashboard
 
-![Analytics Dashboard](screenshots/analytics.png)
+<img width="950" height="808" alt="Screenshot 2026-05-28 at 3 50 47 PM" src="https://github.com/user-attachments/assets/5b18ceba-75aa-47e5-aa1f-5638985161a1" />
+
 
 ---
 
 ## 🏆 Leaderboard
 
-![Leaderboard](screenshots/leaderboard.png)
+<img width="723" height="501" alt="Screenshot 2026-05-28 at 3 51 19 PM" src="https://github.com/user-attachments/assets/592ace64-7153-4ca6-9fd2-8767c7f79ff4" />
+
 
 ---
 
