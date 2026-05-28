@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
@@ -158,6 +159,50 @@
         <h3 style="color: var(--green); margin-bottom: 0.25rem;">Score Automatically Saved!</h3>
         <p style="color: var(--green); font-size: 13px; margin-bottom: 0.5rem;" id="auto-save-message">Your results have been posted to the leaderboard under your profile.</p>
         <button class="btn-primary" style="background: var(--green); color: #fff; padding: 0.5rem 1.25rem; font-size: 13px; margin-top: 0.25rem;" onclick="location.href='leaderboard.html'">🏆 View Rankings</button>
+      </div>
+
+      <!-- ANALYTICS DASHBOARD CARD -->
+      <div class="analytics-dashboard" id="analytics-dashboard" style="display:none; margin-top: 2rem; margin-bottom: 2rem; text-align: left; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; box-shadow: 0 8px 30px rgba(0,0,0,0.03);">
+        <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px; color: var(--purple);">
+          📊 Performance Analytics
+        </h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Current Quiz Accuracy & Insights side-by-side -->
+          <div class="analytics-grid-two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <!-- Doughnut Chart: Accuracy -->
+            <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <h4 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; color: var(--text-secondary);">Quiz Accuracy</h4>
+              <div style="position: relative; height: 110px; width: 110px; display: flex; align-items: center; justify-content: center;">
+                <canvas id="accuracyChart"></canvas>
+              </div>
+            </div>
+            
+            <!-- Weak Areas & Stats -->
+            <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; display: flex; flex-direction: column; justify-content: center;">
+              <h4 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; color: var(--text-secondary);">Key Insights</h4>
+              <div id="weak-areas-panel" style="font-size: 13px; line-height: 1.5; color: var(--text);">
+                <!-- Filled dynamically -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Topic-wise Performance Chart -->
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem;">
+            <h4 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; color: var(--text-secondary);">Topic Mastery (Accuracy %)</h4>
+            <div style="position: relative; height: 160px; width: 100%;">
+              <canvas id="topicChart"></canvas>
+            </div>
+          </div>
+
+          <!-- History Performance Progress Chart -->
+          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.85rem;">
+            <h4 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; color: var(--text-secondary);">Score Trend (Last 8 Runs)</h4>
+            <div style="position: relative; height: 140px; width: 100%;">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="result-actions">
@@ -1045,6 +1090,226 @@ function showResults() {
   }
 
   saveScore(currentPlayerName, currentPlayerAvatar, score, maxStreak, totalTimeUsed);
+  renderAnalyticsDashboard();
+}
+
+function renderAnalyticsDashboard() {
+  const dashboard = document.getElementById('analytics-dashboard');
+  if (isMultiplayer) {
+    if (dashboard) dashboard.style.display = 'none';
+    return;
+  }
+  if (dashboard) dashboard.style.display = 'block';
+
+  // Read CSS variables dynamically for premium theme matching
+  const style = getComputedStyle(document.documentElement);
+  const greenColor = style.getPropertyValue('--green').trim() || '#3B6D11';
+  const redColor = style.getPropertyValue('--red').trim() || '#A32D2D';
+  const purpleColor = style.getPropertyValue('--purple').trim() || '#534AB7';
+  const textColor = style.getPropertyValue('--text').trim() || '#1a1a18';
+  const textSecondary = style.getPropertyValue('--text-secondary').trim() || '#6b6b67';
+  const borderGridColor = style.getPropertyValue('--border').trim() || 'rgba(0,0,0,0.1)';
+
+  // Destroy previous Chart.js instances if they exist to prevent layout/hover bugs
+  if (window.accuracyChartInstance) window.accuracyChartInstance.destroy();
+  if (window.topicChartInstance) window.topicChartInstance.destroy();
+  if (window.trendChartInstance) window.trendChartInstance.destroy();
+
+  // 1. Doughnut Chart: Current Quiz Accuracy
+  const correct = score;
+  const wrong = questions.length - score;
+  
+  const accCtx = document.getElementById('accuracyChart').getContext('2d');
+  window.accuracyChartInstance = new Chart(accCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Correct', 'Incorrect'],
+      datasets: [{
+        data: [correct, wrong],
+        backgroundColor: [greenColor, redColor],
+        borderWidth: 0,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      cutout: '70%'
+    }
+  });
+
+  // 2. Load historical attempts for user analytics
+  const localLeaderboard = JSON.parse(localStorage.getItem('quizbrain_leaderboard')) || [];
+  const userAttempts = localLeaderboard.filter(item => item.username === currentPlayerName);
+
+  // 3. Calculate topic-wise performance
+  const topicStats = {};
+  userAttempts.forEach(attempt => {
+    const tid = attempt.topicId;
+    if (!topicStats[tid]) {
+      topicStats[tid] = {
+        total: 0,
+        correct: 0,
+        name: attempt.topicName || tid,
+        icon: attempt.topicIcon || '🧠'
+      };
+    }
+    topicStats[tid].total += 5;
+    topicStats[tid].correct += attempt.score;
+  });
+
+  const topicLabels = [];
+  const topicAccuracies = [];
+  
+  Object.keys(topicStats).forEach(tid => {
+    const stat = topicStats[tid];
+    const acc = Math.round((stat.correct / stat.total) * 100);
+    topicLabels.push(`${stat.icon} ${stat.name}`);
+    topicAccuracies.push(acc);
+  });
+
+  const topicCtx = document.getElementById('topicChart').getContext('2d');
+  window.topicChartInstance = new Chart(topicCtx, {
+    type: 'bar',
+    data: {
+      labels: topicLabels,
+      datasets: [{
+        label: 'Accuracy %',
+        data: topicAccuracies,
+        backgroundColor: purpleColor,
+        borderRadius: 4,
+        barThickness: 12
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          min: 0,
+          max: 100,
+          grid: { color: borderGridColor },
+          ticks: { color: textSecondary, font: { family: 'Sora', size: 9 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { color: textColor, font: { family: 'Sora', size: 9 } }
+        }
+      }
+    }
+  });
+
+  // 4. Line Chart: Recent score trends (Last 8 Solo Runs)
+  const soloAttempts = userAttempts.filter(item => !item.isDaily);
+  const recentAttempts = soloAttempts.slice(-8);
+  const trendLabels = recentAttempts.map((_, idx) => `Run ${idx + 1}`);
+  const trendData = recentAttempts.map(attempt => attempt.score);
+
+  const trendCtx = document.getElementById('trendChart').getContext('2d');
+  window.trendChartInstance = new Chart(trendCtx, {
+    type: 'line',
+    data: {
+      labels: trendLabels.length > 0 ? trendLabels : ['No Data'],
+      datasets: [{
+        label: 'Score',
+        data: trendData.length > 0 ? trendData : [0],
+        borderColor: purpleColor,
+        backgroundColor: 'rgba(83, 74, 183, 0.08)',
+        borderWidth: 2,
+        tension: 0.35,
+        fill: true,
+        pointBackgroundColor: purpleColor,
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: textSecondary, font: { family: 'Sora', size: 9 } }
+        },
+        y: {
+          min: 0,
+          max: 5,
+          grid: { color: borderGridColor },
+          ticks: { stepSize: 1, color: textSecondary, font: { family: 'Sora', size: 9 } }
+        }
+      }
+    }
+  });
+
+  // 5. Weak Areas & Support Insights
+  const weakTopics = [];
+  let lowestAcc = 100;
+  let lowestTopic = '';
+
+  Object.keys(topicStats).forEach(tid => {
+    const stat = topicStats[tid];
+    const acc = (stat.correct / stat.total) * 100;
+    if (acc < 70) {
+      weakTopics.push(`${stat.icon} ${stat.name} (${Math.round(acc)}%)`);
+    }
+    
+    if (acc < lowestAcc) {
+      lowestAcc = acc;
+      lowestTopic = `${stat.icon} ${stat.name}`;
+    }
+  });
+
+  const panel = document.getElementById('weak-areas-panel');
+  if (panel) {
+    let html = '';
+    
+    if (userAttempts.length <= 1) {
+      html = `
+        <div style="font-weight:700; margin-bottom: 4px; color: var(--purple-dark);">🎯 Welcome to Analytics!</div>
+        <p style="color: var(--text-secondary); font-size:11px; margin: 0; line-height: 1.45;">Complete more quizzes to build your master strength and weakness profile. Currently showing stats for your first run.</p>
+      `;
+    } else {
+      const avgScore = (userAttempts.reduce((sum, a) => sum + a.score, 0) / userAttempts.length).toFixed(1);
+      html += `<div style="margin-bottom: 4px; font-size: 11px; color: var(--text-secondary);"><strong>Total Runs:</strong> ${userAttempts.length} | <strong>Avg Score:</strong> ${avgScore}/5</div>`;
+      
+      if (lowestAcc < 100 && lowestTopic) {
+        html += `
+          <div style="margin-top: 6px; border-left: 3px solid var(--red); padding-left: 8px; margin-bottom: 6px;">
+            <div style="font-size: 9px; font-weight:700; text-transform:uppercase; color: var(--red); letter-spacing: 0.02em;">⚠️ Focus Needed (Lowest)</div>
+            <div style="font-weight:600; font-size:12px; color: var(--text);">${lowestTopic}</div>
+            <div style="font-size: 10px; color: var(--text-secondary);">${Math.round(lowestAcc)}% accuracy</div>
+          </div>
+        `;
+      }
+      
+      if (weakTopics.length > 0) {
+        html += `
+          <div style="margin-top: 6px;">
+            <div style="font-size: 9px; font-weight:700; text-transform:uppercase; color: var(--amber); letter-spacing: 0.02em;">⚠️ Growth Areas</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">${weakTopics.slice(0, 3).join(', ')}</div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div style="margin-top: 6px; border-left: 3px solid var(--green); padding-left: 8px;">
+            <div style="font-size: 9px; font-weight:700; text-transform:uppercase; color: var(--green); letter-spacing: 0.02em;">✨ Elite Brain</div>
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">No weak areas! Keep up the brilliant performance.</div>
+          </div>
+        `;
+      }
+    }
+    
+    panel.innerHTML = html;
+  }
 }
 
 function showMultiplayerResults(t) {
