@@ -796,4 +796,183 @@ body {
   animation: timerPulse 0.8s ease-in-out infinite, timerFlash 0.8s ease-in-out infinite;
 }
 
+/* ── SPIN WHEEL GAME MODE STYLES ── */
+.mode-selector {
+  flex-wrap: wrap !important;
+}
+
+@media (max-width: 480px) {
+  .mode-btn {
+    flex: 1 1 45% !important;
+  }
+}
+
+.spin-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.03);
+  margin: 1rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+.spin-wheel-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spin-wheel-canvas-glow {
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(83, 74, 183, 0.12);
+  background: var(--surface);
+  transition: box-shadow 0.4s ease;
+}
+
+.spin-wheel-container.spinning .spin-wheel-canvas-glow {
+  box-shadow: 0 15px 45px rgba(83, 74, 183, 0.3);
+}
+
+.spin-pointer {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 28px solid #FFD700;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.25));
+  z-index: 5;
+}
+
+.spin-pointer-pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: #CD7F32;
+  border-radius: 50%;
+  z-index: 6;
+}
+
+.btn-spin-action {
+  background: linear-gradient(135deg, var(--purple), #7966FF);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.85rem 2.25rem;
+  font-family: 'Sora', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(83, 74, 183, 0.25);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-spin-action:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(83, 74, 183, 0.4);
+}
+
+.btn-spin-action:active:not(:disabled) {
+  transform: translateY(1px) scale(0.97);
+}
+
+.btn-spin-action:disabled {
+  background: var(--border-md);
+  color: var(--text-secondary);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.spin-announcement {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.96);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .spin-announcement {
+    background: rgba(36, 36, 40, 0.96);
+  }
+}
+:root[data-theme="dark"] .spin-announcement {
+  background: rgba(36, 36, 40, 0.96);
+}
+
+.spin-announcement.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spin-announcement-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.spin-announcement-card {
+  font-size: 30px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: pop 0.4s ease infinite alternate;
+}
+
+.spin-lobby-card {
+  background: linear-gradient(135deg, var(--teal-light), var(--purple-light));
+  border: 2px dashed var(--purple);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 30px rgba(83, 74, 183, 0.05);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.spin-lobby-floating-emoji {
+  position: absolute;
+  right: -15px;
+  bottom: -20px;
+  font-size: 120px;
+  opacity: 0.06;
+  transform: rotate(15deg);
+  pointer-events: none;
+  user-select: none;
+}
+
 

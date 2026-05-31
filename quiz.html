@@ -98,6 +98,33 @@
       </div>
     </div>
 
+    <!-- SPIN WHEEL LOBBY CARD -->
+    <div id="spin-lobby-card" class="spin-lobby-card" style="display:none;">
+      <div class="spin-lobby-floating-emoji">🎡</div>
+      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple-dark); background: rgba(83, 74, 183, 0.15); padding: 4px 12px; border-radius: 20px; display: inline-block; margin-bottom: 1rem; position: relative; z-index: 2;">
+        🎡 Spin Wheel Special Mode
+      </div>
+      <h2 style="font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; position: relative; z-index: 2;">Wheel of Fortune Quiz</h2>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; max-width: 440px; margin: 0 auto 1.25rem; position: relative; z-index: 2;">
+        Before each question, spin the wheel of fortune! The wheel will randomly select one of the four categories: 🧪 Science, 🤖 AI, 🎬 Movies, or ⚽ Sports.
+      </p>
+      
+      <div style="position: relative; z-index: 2; margin-bottom: 1.5rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+        <div class="section-label" style="margin-bottom: 0.50rem;">Choose Difficulty</div>
+        <div class="difficulty-row" id="spin-diff-row" style="margin-bottom: 0px; gap: 6px;">
+          <button class="diff-btn selected" data-spin-diff="easy" onclick="selectSpinDiff('easy')" style="padding: 0.5rem 0.3rem; font-size: 12px;">🟢 Easy<br><span style="font-size:9px;font-weight:400;">30s per Q</span></button>
+          <button class="diff-btn" data-spin-diff="medium" onclick="selectSpinDiff('medium')" style="padding: 0.5rem 0.3rem; font-size: 12px;">🟡 Medium<br><span style="font-size:9px;font-weight:400;">20s per Q</span></button>
+          <button class="diff-btn" data-spin-diff="hard" onclick="selectSpinDiff('hard')" style="padding: 0.5rem 0.3rem; font-size: 12px;">🔴 Hard<br><span style="font-size:9px;font-weight:400;">10s per Q</span></button>
+        </div>
+      </div>
+
+      <div style="position: relative; z-index: 2;">
+        <button class="btn-primary" style="padding:0.9rem 2.2rem; font-size:16px; margin:0 auto; display:inline-flex; justify-content:center; gap:8px;" onclick="startSpinQuiz()">
+          Enter Spin Room 🎡
+        </button>
+      </div>
+    </div>
+
     <div id="standard-lobby-suite">
       <div class="section-label">Category</div>
       <div class="category-tabs">
@@ -241,6 +268,9 @@ const TOPICS = [
   { id:'movies',      name:'Movie Quiz',       icon:'🎬', category:'general' },
   { id:'coding',      name:'Web Coding',       icon:'💻', category:'general' },
   { id:'anime',       name:'Anime Quiz',       icon:'⚡', category:'general' },
+  { id:'science',     name:'Science Quiz',     icon:'🧪', category:'general' },
+  { id:'sports',      name:'Sports Quiz',      icon:'⚽', category:'general' },
+  { id:'spin',        name:'Spin Wheel Quiz',  icon:'🎡', category:'general' },
   // Programming
   { id:'python',      name:'Python',           icon:'🐍', category:'programming' },
   { id:'ml',          name:'Machine Learning', icon:'📊', category:'programming' },
@@ -432,6 +462,26 @@ const QUESTIONS = {
     { q:'What is the difference between "pass by value" and "pass by reference" in C++?', opts:['No difference','Pass by value copies the argument; pass by reference uses the original variable','Pass by reference is only for pointers','Pass by value is slower in all cases'], ans:1 },
     { q:'Which C++ container maintains elements in sorted order automatically?', opts:['vector','deque','list','map'], ans:3 },
     { q:'What does "const" before a variable declaration mean in C++?', opts:['The variable is global','The variable\'s value cannot be changed after initialization','The variable is allocated on the heap','The variable is a pointer'], ans:1 }
+  ],
+  science: [
+    { q:'Which planet is known as the Red Planet?', opts:['Venus', 'Mars', 'Jupiter', 'Saturn'], ans:1 },
+    { q:'What is the chemical symbol for water?', opts:['Wa', 'H2O', 'O2', 'CO2'], ans:1 },
+    { q:'What is the powerhouse of the cell?', opts:['Nucleus', 'Mitochondria', 'Ribosome', 'Vacuole'], ans:1 },
+    { q:'Which element is the most abundant in Earth\'s atmosphere?', opts:['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen'], ans:1 },
+    { q:'What is the speed of light in a vacuum?', opts:['300,000 km/s', '150,000 km/s', '500,000 km/s', '1,000,000 km/s'], ans:0 },
+    { q:'How many bones are there in an adult human body?', opts:['106', '206', '306', '406'], ans:1 },
+    { q:'What is the chemical formula for table salt?', opts:['NaCl', 'HCl', 'NaOH', 'KCl'], ans:0 },
+    { q:'Which scientist proposed the theory of general relativity?', opts:['Isaac Newton', 'Albert Einstein', 'Stephen Hawking', 'Galileo Galilei'], ans:1 }
+  ],
+  sports: [
+    { q:'How many players are on the field for one team in a soccer match?', opts:['9', '10', '11', '12'], ans:2 },
+    { q:'Which country won the FIFA World Cup in 2022?', opts:['France', 'Brazil', 'Argentina', 'Germany'], ans:2 },
+    { q:'In which sport would you use a shuttlecock?', opts:['Tennis', 'Badminton', 'Squash', 'Table Tennis'], ans:1 },
+    { q:'How long is a standard marathon in miles?', opts:['26.2 miles', '13.1 miles', '31.2 miles', '20.0 miles'], ans:0 },
+    { q:'Which athlete has won the most Olympic gold medals of all time?', opts:['Usain Bolt', 'Michael Phelps', 'Larisa Latynina', 'Carl Lewis'], ans:1 },
+    { q:'What is the maximum score possible in a single frame of bowling?', opts:['10', '20', '30', '300'], ans:2 },
+    { q:'In tennis, what word is used to describe a score of zero?', opts:['Nil', 'Love', 'Zilch', 'Nada'], ans:1 },
+    { q:'Which NBA player is widely known as \'King James\'?', opts:['Stephen Curry', 'Kevin Durant', 'LeBron James', 'Michael Jordan'], ans:2 }
   ]
 };
 
@@ -539,7 +589,11 @@ function startQuiz() {
   const celebratePanel = document.getElementById('unlocked-badges-panel');
   if (celebratePanel) celebratePanel.style.display = 'none';
   
-  questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+  if (selectedTopic === 'spin') {
+    questions = [null, null, null, null, null];
+  } else {
+    questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+  }
   current = 0; score = 0; totalTimeUsed = 0; answered = false;
   currentStreak = 0; maxStreak = 0;
 
@@ -575,15 +629,22 @@ function renderQuestion() {
   const total = DIFF_TIME[selectedDiff];
   const t = TOPICS.find(t => t.id === selectedTopic);
 
+  if (selectedTopic === 'spin' && q === null) {
+    renderSpinWheelScreen();
+    return;
+  }
+
   if (isMultiplayer) {
     renderMultiplayerQuestion(q, total, t);
     return;
   }
 
   const container = document.getElementById('quiz-arena-container');
+  const badgeText = selectedTopic === 'spin' && q.categoryIcon && q.categoryName ? `${q.categoryIcon} ${q.categoryName}` : t.name;
+
   container.innerHTML = `
     <div class="quiz-top">
-      <span class="topic-badge" id="quiz-badge">${t.name}</span>
+      <span class="topic-badge" id="quiz-badge">${badgeText}</span>
       <div style="display:flex; align-items:center; gap:12px;">
         <span id="q-counter" style="font-size:13px; font-weight:600; color:var(--text-secondary);">${current + 1}/5</span>
         <div class="timer-wrap">
@@ -1524,7 +1585,11 @@ function retryQuiz() {
   p1Answered = false; p2Answered = false;
   p1SelectedIdx = -1; p2SelectedIdx = -1;
 
-  questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+  if (selectedTopic === 'spin') {
+    questions = [null, null, null, null, null];
+  } else {
+    questions = shuffle(QUESTIONS[selectedTopic]).slice(0, 5);
+  }
 
   if (isMultiplayer && dataConn && isHost) {
     dataConn.send({
@@ -2053,6 +2118,30 @@ function checkActiveProfile() {
         <span>Difficulty: <strong>${diffEmojis[params.difficulty]}</strong></span>
       `;
     }
+  } else if (parsed.mode === 'spin') {
+    isMultiplayer = false;
+    currentPlayerName = (parsed.p1 ? parsed.p1.name : parsed.name) || 'Guest';
+    currentPlayerAvatar = (parsed.p1 ? parsed.p1.avatar : parsed.avatar) || '🚀';
+    document.getElementById('player-avatar').textContent = currentPlayerAvatar;
+    document.getElementById('player-name').textContent = currentPlayerName;
+
+    selectedTopic = 'spin';
+
+    // Hide other panels
+    const standardLobby = document.getElementById('standard-lobby-suite');
+    if (standardLobby) standardLobby.style.display = 'none';
+    const onlineLobby = document.getElementById('online-lobby-card');
+    if (onlineLobby) onlineLobby.style.display = 'none';
+
+    // Modify titles
+    const titleEl = document.querySelector('.hero-title');
+    if (titleEl) titleEl.innerHTML = `Fortune <em>Spin</em> 🎡`;
+    const subEl = document.querySelector('.hero-sub');
+    if (subEl) subEl.textContent = `A game of chance and intellect. Spin the wheel to decide each question's category!`;
+
+    // Show spin lobby card
+    const spinLobby = document.getElementById('spin-lobby-card');
+    if (spinLobby) spinLobby.style.display = 'block';
   } else {
     isMultiplayer = false;
     currentPlayerName = (parsed.p1 ? parsed.p1.name : parsed.name) || 'Guest';
@@ -2060,6 +2149,220 @@ function checkActiveProfile() {
     document.getElementById('player-avatar').textContent = currentPlayerAvatar;
     document.getElementById('player-name').textContent = currentPlayerName;
   }
+}
+
+// ── SPIN WHEEL MODE HELPER FUNCTIONS ──
+const SPIN_CATEGORIES = [
+  { id: 'science', name: 'Science', icon: '🧪', color: '#0F6E56' },
+  { id: 'ai',      name: 'AI Quiz',  icon: '🤖', color: '#534AB7' },
+  { id: 'movies',  name: 'Movies',   icon: '🎬', color: '#993C1D' },
+  { id: 'sports',  name: 'Sports',   icon: '⚽', color: '#854F0B' }
+];
+
+function selectSpinDiff(d) {
+  selectedDiff = d;
+  document.querySelectorAll('[data-spin-diff]').forEach(b => b.classList.remove('selected'));
+  const btn = document.querySelector(`[data-spin-diff="${d}"]`);
+  if (btn) btn.classList.add('selected');
+}
+
+function startSpinQuiz() {
+  selectedTopic = 'spin';
+  startQuiz();
+}
+
+function renderSpinWheelScreen() {
+  clearInterval(timerInterval);
+  const container = document.getElementById('quiz-arena-container');
+  container.innerHTML = `
+    <div class="spin-wheel-container" id="wheel-screen-box">
+      <span class="topic-badge">Question ${current + 1} of 5</span>
+      <h2 style="font-size: 20px; font-weight: 700; margin-top: 1rem; color: var(--purple-dark);">Spin for your Category!</h2>
+      <p style="font-size: 13px; color: var(--text-secondary); max-width: 320px; margin: 0.4rem auto 1.25rem;">
+        Which topic will fortune grant you? Spin to decide!
+      </p>
+      
+      <div class="spin-wheel-wrapper">
+        <div class="spin-pointer"></div>
+        <div class="spin-pointer-pin"></div>
+        <canvas id="spinWheelCanvas" width="280" height="280" class="spin-wheel-canvas-glow"></canvas>
+      </div>
+      
+      <button class="btn-spin-action" id="spin-action-btn" onclick="triggerWheelSpin()">
+        Spin Wheel 🎡
+      </button>
+      
+      <div class="spin-announcement" id="spin-popup">
+        <div class="spin-announcement-title">Topic Chosen!</div>
+        <div class="spin-announcement-card" id="spin-popup-content"></div>
+      </div>
+    </div>
+  `;
+  
+  drawWheel(0);
+}
+
+function drawWheel(angle) {
+  const canvas = document.getElementById('spinWheelCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+  const r = canvas.width / 2 - 10;
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.08)';
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = 'var(--surface)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r + 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  
+  const numSlices = SPIN_CATEGORIES.length;
+  const sliceAngle = (Math.PI * 2) / numSlices;
+  
+  SPIN_CATEGORIES.forEach((cat, i) => {
+    const start = i * sliceAngle + angle;
+    const end = start + sliceAngle;
+    
+    ctx.fillStyle = cat.color;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end);
+    ctx.closePath();
+    ctx.fill();
+    
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(start), cy + r * Math.sin(start));
+    ctx.stroke();
+    
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + sliceAngle / 2);
+    
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 12px Sora, sans-serif';
+    
+    ctx.fillText(cat.icon + ' ' + cat.name, r - 25, 4);
+    ctx.restore();
+  });
+  
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 32, 0, Math.PI * 2);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fill();
+  ctx.strokeStyle = '#FFD700';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.restore();
+  
+  ctx.fillStyle = 'var(--purple)';
+  ctx.font = '16px Sora, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🧠', cx, cy);
+}
+
+let isSpinning = false;
+function triggerWheelSpin() {
+  if (isSpinning) return;
+  isSpinning = true;
+  
+  const btn = document.getElementById('spin-action-btn');
+  if (btn) btn.disabled = true;
+  
+  const container = document.getElementById('wheel-screen-box');
+  if (container) container.classList.add('spinning');
+  
+  const targetIndex = Math.floor(Math.random() * SPIN_CATEGORIES.length);
+  const chosenCategory = SPIN_CATEGORIES[targetIndex];
+  
+  const targetAngle = 8 * Math.PI * 2 + (1.5 * Math.PI - (targetIndex + 0.5) * Math.PI / 2) + (Math.random() - 0.5) * (Math.PI / 2) * 0.75;
+  const duration = 3500;
+  const startTime = performance.now();
+  let lastTickSector = -1;
+  
+  if (typeof playUnlockSound === 'function') {
+    playUnlockSound();
+  }
+  
+  function animate(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    
+    const ease = 1 - Math.pow(1 - progress, 3);
+    const currentAngle = targetAngle * ease;
+    
+    drawWheel(currentAngle);
+    
+    let normalized = (1.5 * Math.PI - currentAngle) % (Math.PI * 2);
+    if (normalized < 0) normalized += Math.PI * 2;
+    const sectorIndex = Math.floor(normalized / (Math.PI / 2));
+    
+    if (sectorIndex !== lastTickSector) {
+      if (typeof playTickSound === 'function') {
+        playTickSound();
+      }
+      lastTickSector = sectorIndex;
+    }
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      isSpinning = false;
+      if (container) container.classList.remove('spinning');
+      announceSpunCategory(chosenCategory);
+    }
+  }
+  
+  requestAnimationFrame(animate);
+}
+
+function announceSpunCategory(chosen) {
+  if (typeof playCorrectSound === 'function') {
+    playCorrectSound();
+  }
+  
+  if (typeof confetti === 'function') {
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.6 }
+    });
+  }
+  
+  const popup = document.getElementById('spin-popup');
+  const content = document.getElementById('spin-popup-content');
+  
+  if (content) {
+    content.innerHTML = `<span style="color:${chosen.color};">${chosen.icon} ${chosen.name}</span>`;
+  }
+  
+  if (popup) {
+    popup.classList.add('active');
+  }
+  
+  setTimeout(() => {
+    const unused = QUESTIONS[chosen.id].filter(q => !questions.some(eq => eq && eq.q === q.q));
+    const candidates = unused.length > 0 ? unused : QUESTIONS[chosen.id];
+    const selectedQ = shuffle(candidates)[0];
+    
+    const qCopy = { ...selectedQ, spunCategory: chosen.id, categoryName: chosen.name, categoryIcon: chosen.icon };
+    questions[current] = qCopy;
+    
+    renderQuestion();
+  }, 2000);
 }
 
 function switchPlayer() {

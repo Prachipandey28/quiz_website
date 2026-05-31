@@ -10,7 +10,7 @@
   <script src="theme.js"></script>
   <script src="badges.js"></script>
 </head>
-<body>
+<body>  
   <div class="container" style="padding-top: 2rem;">
     <div style="text-align: center; margin-bottom: 2rem;">
       <div class="brand" style="justify-content: center; margin-bottom: 0.5rem;">
@@ -38,6 +38,10 @@
       <button class="mode-btn" id="mode-daily" onclick="setGameMode('daily')">
         <span style="font-size: 18px;">🔥</span>
         <span style="margin-top:2px;">Daily Challenge</span>
+      </button>
+      <button class="mode-btn" id="mode-spin" onclick="setGameMode('spin')">
+        <span style="font-size: 18px;">🎡</span>
+        <span style="margin-top:2px;">Spin Wheel</span>
       </button>
     </div>
 
@@ -240,6 +244,11 @@
       document.getElementById('mode-online').classList.toggle('active', mode === 'online');
       document.getElementById('mode-daily').classList.toggle('active', mode === 'daily');
       
+      const spinBtn = document.getElementById('mode-spin');
+      if (spinBtn) {
+        spinBtn.classList.toggle('active', mode === 'spin');
+      }
+      
       document.getElementById('p2-card').style.display = (mode === 'battle' ? 'block' : 'none');
       document.getElementById('p1-label').textContent = (mode === 'battle' ? 'Player 1 Profile' : 'Player Profile');
       
@@ -305,6 +314,13 @@
           proceedBtn.textContent = `Start Daily Challenge as ${p1Name}! 🔥`;
         } else {
           proceedBtn.textContent = `Fill username to start 🔥`;
+        }
+      } else if (gameMode === 'spin') {
+        proceedBtn.disabled = (p1Name.length === 0);
+        if (p1Name.length > 0) {
+          proceedBtn.textContent = `Proceed to Spin Room as ${p1Name} 🎡`;
+        } else {
+          proceedBtn.textContent = `Proceed to Spin Room 🎡`;
         }
       } else {
         proceedBtn.disabled = (p1Name.length === 0 || p2Name.length === 0);

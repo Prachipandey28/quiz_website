@@ -99,3 +99,27 @@ function playUnlockSound() {
     console.warn("Audio play blocked/failed:", e);
   }
 }
+
+function playTickSound() {
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1200, now);
+    
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start(now);
+    osc.stop(now + 0.04);
+  } catch (e) {
+    console.warn("Tick sound blocked/failed:", e);
+  }
+}

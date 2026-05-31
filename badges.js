@@ -42,6 +42,13 @@ const BADGES = [
     emoji: '⚡',
     desc: 'Quiz average time per question < 5s and score >= 4',
     color: 'badge-amber'
+  },
+  {
+    id: 'wheel_master',
+    name: 'Wheel Master',
+    emoji: '🎡',
+    desc: 'Completed a Spin Wheel Quiz run with a score of 4 or 5',
+    color: 'badge-amber'
   }
 ];
 
@@ -108,6 +115,12 @@ function calculateEarnedBadges(username) {
   });
   if (hasFast) {
     earned.push('fast_thinker');
+  }
+  
+  // 7. Wheel Master
+  const hasWheelMaster = userAttempts.some(a => a.topicId === 'spin' && a.score >= 4);
+  if (hasWheelMaster) {
+    earned.push('wheel_master');
   }
   
   // Filter metadata matching earned IDs
