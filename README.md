@@ -6,14 +6,14 @@
 
 <br/>
 
-![HTML5](https://img.shields.io/badge/HTML5-Advanced-orange?style=for-the-badge\&logo=html5)
-![CSS3](https://img.shields.io/badge/CSS3-Modern-blue?style=for-the-badge\&logo=css3)
-![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow?style=for-the-badge\&logo=javascript)
-![Firebase](https://img.shields.io/badge/Firebase-Cloud%20Ready-ffca28?style=for-the-badge\&logo=firebase)
+![HTML5](https://img.shields.io/badge/HTML5-Advanced-orange?style=for-the-badge&logo=html5)
+![CSS3](https://img.shields.io/badge/CSS3-Modern-blue?style=for-the-badge&logo=css3)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow?style=for-the-badge&logo=javascript)
+![Firebase](https://img.shields.io/badge/Firebase-Cloud%20Ready-ffca28?style=for-the-badge&logo=firebase)
 ![PeerJS](https://img.shields.io/badge/PeerJS-Realtime-purple?style=for-the-badge)
 ![Chart.js](https://img.shields.io/badge/Chart.js-Analytics-red?style=for-the-badge)
 
-### 🚀 Multiplayer • Analytics • Gamification • Real-Time • Audio Engine • Theme System
+### 🚀 Multiplayer • Analytics • Gamification • Real-Time • Audio Engine • Theme System • Fortune Spin
 
 </div>
 
@@ -26,14 +26,28 @@ QuizBrain is not just another quiz website.
 It is a **full interactive learning & battle platform** featuring:
 
 ✅ Real-time multiplayer battles
-✅ Gamified achievement system
+✅ Gamified achievement system with badges
 ✅ Daily challenge engine
 ✅ Dynamic analytics dashboard
-✅ Procedural audio synthesis
-✅ Adaptive theme engine
-✅ Firebase-ready leaderboard
-✅ Peer-to-peer networking
-✅ Responsive modern UI
+✅ Procedural audio synthesis (Web Audio API)
+✅ Adaptive theme engine (Auto OS theme matching)
+✅ Firebase-ready cloud leaderboard
+✅ Peer-to-peer networking (PeerJS)
+✅ Responsive modern UI with animations
+✅ 🎡 Wheel of Fortune (Fortune Spin) Mode
+
+---
+
+# 🎡 Wheel of Fortune (Fortune Spin) Mode
+
+Let fate decide your trivia destiny! Take a break from manual category selection and step into the **Fortune Spin Special Mode**.
+
+### 🌟 Mode Highlights:
+* 🎡 **Dynamic Canvas Renderer**: Smooth trigonometric easing physics built entirely on an interactive HTML5 `<canvas>`.
+* 🎨 **Vibrant Segment Styling**: Theme-integrated, high-contrast slices representing distinct random categories (Science, AI, Movies, Sports, Indian Food, Bollywood).
+* 🎵 **Procedural Audio Sync**: Audio clicks (Web Audio API synthesized ticks) play dynamically as the wheel slices move past the selector pin.
+* 🎉 **Confetti Blast**: A canvas-confetti celebration triggers on successful category selection!
+* 🧠 **Real-Time Category Splicing**: Shuffles and pulls fresh, unused questions from the selected topic database in real-time.
 
 ---
 
@@ -59,14 +73,15 @@ QuizBrain includes a complete achievement progression system.
 
 ## 🎖️ Unlockable Badges
 
-| Badge            | Achievement             |
-| ---------------- | ----------------------- |
-| 🏁 First Steps   | Complete first quiz     |
-| 🤖 AI Genius     | Master AI quizzes       |
-| 🐍 Python Master | High Python scores      |
-| 💻 Web Guru      | Excel in coding quizzes |
-| 🔥 Perfect 5     | Score 5/5               |
-| ⚡ Fast Thinker   | Ultra-fast answers      |
+| Badge            | Achievement             | Description |
+| ---------------- | ----------------------- | ----------- |
+| 🏁 First Steps   | Complete first quiz     | Completed first solo quiz run |
+| 🤖 AI Genius     | Master AI quizzes       | Average score >= 4.0 on AI Quiz (min 2 runs) |
+| 🐍 Python Master | High Python scores      | Average score >= 4.0 on Python (min 2 runs) |
+| 💻 Web Guru      | Excel in coding quizzes | Average score >= 4.0 on Web Coding, HTML5, or CSS3 (min 2 runs) |
+| 🔥 Perfect 5     | Score 5/5               | Achieved a perfect 5/5 score in any solo run |
+| ⚡ Fast Thinker   | Ultra-fast answers      | Quiz average time per question < 5s and score >= 4 |
+| 🎡 Wheel Master  | Spin Wheel Master       | Completed a Spin Wheel Quiz run with a score of 4 or 5 |
 
 ---
 
@@ -107,9 +122,10 @@ Instead of static audio files, sounds are synthesized in real-time using:
 
 ### Includes:
 
-* ✅ Correct answer melody
-* ❌ Wrong answer buzzer
-* 🏆 Achievement unlock sound
+* ✅ Correct answer melody (rising C5 -> G5 arpeggio)
+* ❌ Wrong answer buzzer (slides down 220Hz -> 120Hz triangle wave)
+* 🏆 Achievement unlock sound (major arpeggiated triumph chord)
+* ⏱️ Tick/Click sound (programmatic clock tick and spin wheel sector tick)
 
 ---
 
@@ -130,9 +146,14 @@ Modern light/dark architecture with:
 ## 🌐 General
 
 * 🤖 AI Quiz
-* 🎬 Movies
-* ⚡ Anime
+* 🎬 Movie Quiz
 * 💻 Web Coding
+* ⚡ Anime Quiz
+* 🧪 Science Quiz
+* ⚽ Sports Quiz
+* 🍕 Indian Food
+* 🎵 Bollywood Music
+* 🎡 Spin Wheel Quiz (Fortune Special Mode)
 
 ## 💻 Programming
 
@@ -141,7 +162,7 @@ Modern light/dark architecture with:
 * 🧬 Deep Learning
 * 🕸️ Neural Networks
 * 🏗️ OOP Concepts
-* ⚙️ C++
+* ⚙️ C++ Quiz
 * 🔀 Git
 * 🐙 GitHub
 * 🌐 HTML5
@@ -170,16 +191,18 @@ Modern light/dark architecture with:
 * LocalStorage Persistence
 * Theme Architecture
 * Multiplayer Synchronization
+* HTML5 Canvas Physics Engine
 
 ## Browser APIs
 
 * Web Audio API
 * LocalStorage API
 * MatchMedia API
+* HTML5 Canvas API
 
 ## Networking & Cloud
 
-* PeerJS
+* PeerJS (WebRTC)
 * Firebase Firestore
 
 ---
@@ -194,9 +217,9 @@ Modern light/dark architecture with:
 
 ## Libraries & APIs
 
-* Firebase
-* PeerJS
-* Chart.js
+* Firebase SDK
+* PeerJS (Real-time P2P)
+* Chart.js (Visual Analytics)
 * Canvas Confetti
 * Web Audio API
 
@@ -237,13 +260,11 @@ quiz_website/
 
 <img width="950" height="808" alt="Screenshot 2026-05-28 at 3 50 47 PM" src="https://github.com/user-attachments/assets/5b18ceba-75aa-47e5-aa1f-5638985161a1" />
 
-
 ---
 
 ## 🏆 Leaderboard
 
 <img width="723" height="501" alt="Screenshot 2026-05-28 at 3 51 19 PM" src="https://github.com/user-attachments/assets/592ace64-7153-4ca6-9fd2-8767c7f79ff4" />
-
 
 ---
 
