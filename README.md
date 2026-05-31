@@ -31,8 +31,7 @@ It is designed for trivia enthusiasts and developers alike, blending real-time p
 
 <div align="center">
   <p><strong>🏠 Beautiful Glassmorphism Home Lobby & Theme Suite</strong></p>
-  <img width="1124" height="806" alt="Screenshot 2026-05-31 at 10 46 59 PM" src="https://github.com/user-attachments/assets/f092752c-d285-43be-9470-25bd07667acd" />
-
+  <img width="100%" alt="QuizBrain Main Lobby Showcase" src="https://github.com/user-attachments/assets/f092752c-d285-43be-9470-25bd07667acd" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1.5px solid var(--border);" />
 </div>
 
 ---
