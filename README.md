@@ -19,327 +19,173 @@
 
 ---
 
-# 🌟 What Makes QuizBrain Different?
+## 🌟 The QuizBrain Experience
 
-QuizBrain is not just another quiz website.
+QuizBrain is a modern, high-fidelity **interactive learning and battle platform** that replaces traditional dry quizzes with an immersive, gamified web experience. 
 
-It is a **full interactive learning & battle platform** featuring:
-
-✅ Real-time multiplayer battles
-✅ Gamified achievement system with badges
-✅ Daily challenge engine
-✅ Dynamic analytics dashboard
-✅ Procedural audio synthesis (Web Audio API)
-✅ Adaptive theme engine (Auto OS theme matching)
-✅ Firebase-ready cloud leaderboard
-✅ Peer-to-peer networking (PeerJS)
-✅ Responsive modern UI with animations
-✅ 🎡 Wheel of Fortune (Fortune Spin) Mode
+It is designed for trivia enthusiasts and developers alike, blending real-time peer-to-peer networking, modular game modes, procedural audio generation, and data-driven insights.
 
 ---
 
-# 🎡 Wheel of Fortune (Fortune Spin) Mode
+## 🕹️ Immersive Game Modes
 
-Let fate decide your trivia destiny! Take a break from manual category selection and step into the **Fortune Spin Special Mode**.
+### 1. ⚔️ Real-Time Multiplayer Arena
+High-stakes competitive matchmaking operating entirely in the browser:
+* **True Peer-to-Peer**: Powered by **PeerJS (WebRTC)** to connect players directly without needing a central game server.
+* **Synchronized State**: Instant room synchronization, live answer-locking overlays, dynamic competitive scoring, and shared round timers.
+* **Zero Config Setup**: Host a room instantly to obtain an invite link or enter a 4-digit room code to join.
 
-### 🌟 Mode Highlights:
-* 🎡 **Dynamic Canvas Renderer**: Smooth trigonometric easing physics built entirely on an interactive HTML5 `<canvas>`.
-* 🎨 **Vibrant Segment Styling**: Theme-integrated, high-contrast slices representing distinct random categories (Science, AI, Movies, Sports, Indian Food, Bollywood).
-* 🎵 **Procedural Audio Sync**: Audio clicks (Web Audio API synthesized ticks) play dynamically as the wheel slices move past the selector pin.
-* 🎉 **Confetti Blast**: A canvas-confetti celebration triggers on successful category selection!
-* 🧠 **Real-Time Category Splicing**: Shuffles and pulls fresh, unused questions from the selected topic database in real-time.
+### 2. 🎡 Wheel of Fortune (Fortune Spin)
+Let probability guide your intellect in this specialty gamified mode:
+* **Canvas Easing Engine**: Built using HTML5 `<canvas>` with custom angular momentum decay (**cubic ease-out**) for a realistic wheel deceleration.
+* **Synchronized Audio Ticks**: Triggers crisp frequency clicks in real-time precisely as segment boundaries pass the pointer needle.
+* **Celebration Effects**: Explodes confetti cascades across the viewport upon selection to elevate player engagement.
+
+### 3. 🔥 Daily Seeded Challenge
+A competitive puzzle designed to keep users returning every 24 hours:
+* **Deterministic Generation**: Uses a time-based hashing algorithm to seed a unique category, difficulty, and question set for all users globally.
+* **One-Shot Competitive Integrity**: Enforces a single-attempt rule per calendar day, logging scores securely to local and cloud stores.
+* **Results Sharing**: Features a clipboard copy engine that reformats stats into an emoji-rich summary scorecard to share on social feeds.
 
 ---
 
-# 🎮 Real-Time Multiplayer Arena
+## 🎖️ Gamification & Achievement Architecture
 
-Battle your friends live using:
+QuizBrain tracks performance in real-time, rewarding excellence with system-level **badges** and high-fidelity analytics.
 
-* 🌐 PeerJS networking
-* 🔗 Room code matchmaking
-* ⚔️ Real-time quiz synchronization
-* 🏆 Competitive scoring
-* 📊 Live progress tracking
+### 🏆 Unlockable Badges
+A modular badge-calculation engine handles complex evaluation criteria across historic attempts:
+
+| Badge | Achievement | Technical Unlock Criteria |
+| :--- | :--- | :--- |
+| **🏁 First Steps** | Beginner's Mark | Complete 1 solo quiz run. |
+| **🤖 AI Genius** | Neural Virtuoso | Maintain an average score of $\ge 4.0$ on the AI Quiz (minimum 2 runs). |
+| **🐍 Python Master** | Syntax Expert | Maintain an average score of $\ge 4.0$ on Python (minimum 2 runs). |
+| **💻 Web Guru** | Frontend Generalist | Average score of $\ge 4.0$ across Web Coding, HTML5, or CSS3 (minimum 2 runs). |
+| **🔥 Perfect 5** | Flawless Execution | Achieve a perfect 5/5 score in any solo game. |
+| **⚡ Fast Thinker** | Precision Under Pressure | Average response time of $< 5$ seconds per question with a score of $\ge 4$. |
+| **🎡 Wheel Master** | Conqueror of Chance | Complete a Spin Wheel Quiz run with a final score of 4 or 5. |
+
+---
+
+## 🧠 Quiz Categories
+
+QuizBrain supports 2 main knowledge quadrants, structured into modular data maps:
+
+### 🌐 General Trivia
+* **🤖 Artificial Intelligence**: LLMs, Turing tests, neural network concepts, and historical breakthroughs.
+* **🎬 Movie Trivia**: Cinematic classics, iconic quotes, and director trivia.
+* **⚡ Anime & Pop Culture**: Global animations, iconic series, and fan favorites.
+* **🧪 Advanced Science**: Chemistry, physics, space, and biological theories.
+* **⚽ Global Sports**: Iconic athletes, tournament history, and record achievements.
+* **🍕 Indian Food**: Regional delicacies, traditional culinary arts, and spices.
+* **🎵 Bollywood Music**: Legendary soundtracks, composers, and lyricists.
+* **🎡 Spin Wheel Special**: Categories chosen at random before every question.
+
+### 💻 Programming & Tech
+* **🐍 Python Programming**: Syntactic sugar, decorators, generators, and data types.
+* **📊 Machine Learning**: Classic algorithms, hyperparameter tuning, and regression metrics.
+* **🧬 Deep Learning**: Transformers, CNNs, backpropagation, and training architectures.
+* **🕸️ Neural Networks**: Activations, weights, bias configurations, and optimization math.
+* **🏗️ OOP Principles**: Polymorphism, inheritance, encapsulation, and abstractions.
+* **⚙️ C++ Core**: Pointers, memory allocation, templates, and standard libraries.
+* **🔀 Version Control (Git & GitHub)**: Branching, merging, rebase workflows, and remote operations.
+* **🌐 Web Technologies (HTML5 & CSS3)**: Semantic tags, layouts, flexbox, grids, and variable themes.
+* **☕ Core Java**: Multi-threading, JVM structures, garbage collection, and exceptions.
+* **🐧 Linux Systems**: Commands, file structures, shell scripting, and permissions.
+
+---
+
+## 🎨 Advanced CSS & Theme System
+* **Light / Dark Hybrid Theme Engine**: Implements CSS Custom Properties with zero style flashes on load, leveraging persistent `localStorage` and `matchMedia` system preferences.
+* **Glassmorphism Layouts**: Uses fine backing blurs (`backdrop-filter`), rich glowing borders, dynamic gradients, and smooth transition states.
+
+---
+
+## 🎵 Real-Time Sound Synthesis (Web Audio API)
+To maintain lightning-fast page loading and keep the asset bundle small, QuizBrain features a **procedural sound synthesizer** instead of loading heavy static audio files (`.mp3` or `.wav`).
+
+Using raw mathematical waves, it generates crisp synth patterns on the fly:
+* **Correct Answer arpeggio**: A rising double-tone arpeggio (C5 $\rightarrow$ G5 sine wave oscillator).
+* **Incorrect Answer buzzer**: A sliding frequency sweep (triangle wave descending from 220Hz $\rightarrow$ 120Hz).
+* **Achievement Unlock triumph**: A complex major-arpeggiated triad chord (C5 $\rightarrow$ E5 $\rightarrow$ G5 $\rightarrow$ C6).
+* **Spin Wheel Tick**: Tiny high-frequency pulses (1200Hz sine waves decaying in 40ms) to simulate mechanical cog clicks.
+
+---
+
+## 🏗️ Architecture & Blueprints
 
 ```text
-Player 1 ⚔️ Player 2
+       [ Player 1 Browser ]               [ Player 2 Browser ]
+               │                                   │
+               │  ◄────── PeerJS WebRTC P2P ─────► │
+               ▼                                   ▼
+        [ State Sync ]                       [ State Sync ]
+     (Score, Answer, Time)                (Score, Answer, Time)
+               │                                   │
+               ├──────────────────┐ ┌──────────────┤
+               ▼                  ▼ ▼              ▼
+        [ Web Audio API ]    [ LocalStorage ]  [ Chart.js Analytics ]
+     (Procedural Synthesis)   (Progress Log)     (Performance Curves)
 ```
 
----
-
-# 🏆 Gamification Engine
-
-QuizBrain includes a complete achievement progression system.
-
-## 🎖️ Unlockable Badges
-
-| Badge            | Achievement             | Description |
-| ---------------- | ----------------------- | ----------- |
-| 🏁 First Steps   | Complete first quiz     | Completed first solo quiz run |
-| 🤖 AI Genius     | Master AI quizzes       | Average score >= 4.0 on AI Quiz (min 2 runs) |
-| 🐍 Python Master | High Python scores      | Average score >= 4.0 on Python (min 2 runs) |
-| 💻 Web Guru      | Excel in coding quizzes | Average score >= 4.0 on Web Coding, HTML5, or CSS3 (min 2 runs) |
-| 🔥 Perfect 5     | Score 5/5               | Achieved a perfect 5/5 score in any solo run |
-| ⚡ Fast Thinker   | Ultra-fast answers      | Quiz average time per question < 5s and score >= 4 |
-| 🎡 Wheel Master  | Spin Wheel Master       | Completed a Spin Wheel Quiz run with a score of 4 or 5 |
-
----
-
-# 📊 Analytics Dashboard
-
-Track your performance using beautiful visual dashboards powered by **Chart.js**.
-
-### Analytics Include:
-
-* Accuracy tracking
-* Topic mastery graphs
-* Performance trends
-* Weak area analysis
-* Quiz history insights
-
----
-
-# 🔥 Daily Challenge System
-
-Every day unlocks:
-
-* 🎯 New seeded challenge
-* 🧠 Unique question set
-* 🏆 Daily rankings
-* ⚡ One-attempt competitive mode
-
----
-
-# 🎵 Procedural Audio Engine
-
-QuizBrain generates sounds dynamically using the **Web Audio API**.
-
-Instead of static audio files, sounds are synthesized in real-time using:
-
-* Oscillators
-* Gain nodes
-* Frequency ramps
-
-### Includes:
-
-* ✅ Correct answer melody (rising C5 -> G5 arpeggio)
-* ❌ Wrong answer buzzer (slides down 220Hz -> 120Hz triangle wave)
-* 🏆 Achievement unlock sound (major arpeggiated triumph chord)
-* ⏱️ Tick/Click sound (programmatic clock tick and spin wheel sector tick)
-
----
-
-# 🌙 Adaptive Theme System
-
-Modern light/dark architecture with:
-
-* Automatic OS theme detection
-* Manual theme switching
-* Persistent theme saving
-* Flash prevention on load
-* Animated floating theme toggle
-
----
-
-# 🧠 Quiz Categories
-
-## 🌐 General
-
-* 🤖 AI Quiz
-* 🎬 Movie Quiz
-* 💻 Web Coding
-* ⚡ Anime Quiz
-* 🧪 Science Quiz
-* ⚽ Sports Quiz
-* 🍕 Indian Food
-* 🎵 Bollywood Music
-* 🎡 Spin Wheel Quiz (Fortune Special Mode)
-
-## 💻 Programming
-
-* 🐍 Python
-* 📊 Machine Learning
-* 🧬 Deep Learning
-* 🕸️ Neural Networks
-* 🏗️ OOP Concepts
-* ⚙️ C++ Quiz
-* 🔀 Git
-* 🐙 GitHub
-* 🌐 HTML5
-* 🎨 CSS3
-* ☕ Java
-* 🐧 Linux
-
----
-
-# ⚡ Difficulty Modes
-
-| Difficulty | Timer |
-| ---------- | ----- |
-| 🟢 Easy    | 30s   |
-| 🟡 Medium  | 20s   |
-| 🔴 Hard    | 10s   |
-
----
-
-# 🏗️ Architecture Highlights
-
-## Frontend Systems
-
-* Dynamic DOM Rendering
-* State Management
-* LocalStorage Persistence
-* Theme Architecture
-* Multiplayer Synchronization
-* HTML5 Canvas Physics Engine
-
-## Browser APIs
-
-* Web Audio API
-* LocalStorage API
-* MatchMedia API
-* HTML5 Canvas API
-
-## Networking & Cloud
-
-* PeerJS (WebRTC)
-* Firebase Firestore
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
-
-* HTML5
-* CSS3
-* Vanilla JavaScript
-
-## Libraries & APIs
-
-* Firebase SDK
-* PeerJS (Real-time P2P)
-* Chart.js (Visual Analytics)
-* Canvas Confetti
-* Web Audio API
-
----
-
-# 📂 Project Structure
-
+### File Hierarchy
 ```bash
 quiz_website/
 │
-├── index.html
-├── quiz.html
-├── leaderboard.html
-├── style.css
-├── badges.js
-├── sound.js
-├── theme.js
-└── README.md
+├── index.html        # Entry lobby, profile creation, and landing hub
+├── quiz.html         # Main gameplay arena (Standard, Daily, Multiplayer, Spin)
+├── leaderboard.html  # Dynamic score ranking dashboard & history stats
+├── style.css         # Component stylesheet (themes, glassmorphism, animations)
+├── badges.js         # Gamification and rules evaluation engine
+├── sound.js          # Procedural Web Audio API sound synthesizer
+├── theme.js          # Adaptive system theme listener and switcher
+└── README.md         # Professional project documentation
 ```
 
 ---
 
-# 📸 Screenshots
+## 🚀 Getting Started
 
-## 🏠 Home Lobby
-
-<img width="1175" height="763" alt="Screenshot 2026-05-28 at 3 46 02 PM" src="https://github.com/user-attachments/assets/4fc39e5e-0255-4d2e-bd02-bcddc1baff84" />
-
----
-
-## ⚔️ Multiplayer Battle Arena
-
-<img width="805" height="782" alt="Screenshot 2026-05-28 at 3 48 00 PM" src="https://github.com/user-attachments/assets/1796beac-e217-4c02-a885-85315e587cba" />
-
----
-
-## 📊 Analytics Dashboard
-
-<img width="950" height="808" alt="Screenshot 2026-05-28 at 3 50 47 PM" src="https://github.com/user-attachments/assets/5b18ceba-75aa-47e5-aa1f-5638985161a1" />
-
----
-
-## 🏆 Leaderboard
-
-<img width="723" height="501" alt="Screenshot 2026-05-28 at 3 51 19 PM" src="https://github.com/user-attachments/assets/592ace64-7153-4ca6-9fd2-8767c7f79ff4" />
-
----
-
-# 🚀 Getting Started
-
-## Clone Repository
-
+### 1. Installation
+Clone the repository to copy the static web files:
 ```bash
 git clone https://github.com/Prachipandey28/quiz_website.git
-```
-
----
-
-## Open Folder
-
-```bash
 cd quiz_website
 ```
 
----
+### 2. Execution
+Since the game is built purely with **Vanilla Web Technologies**, there are no compile or build steps required. Simply open `index.html` in any modern web browser:
 
-## Run Application
-
-Open:
-
-```bash
-index.html
-```
-
-in your browser.
-
----
-
-# 🔮 Future Roadmap
-
-* 🤖 AI-generated questions
-* 🧠 Adaptive AI difficulty
-* 🔐 Authentication system
-* ☁️ Full cloud sync
-* 🎙️ Voice assistant gameplay
-* 📱 Mobile app version
-* 🌍 Global matchmaking
-* 🧩 AI-powered recommendations
+* **Double-click** `index.html` in your directory.
+* **Or run a local static server** (highly recommended for Firebase and PeerJS features):
+  ```bash
+  # Python 3
+  python -m http.server 8000
+  
+  # Node.js
+  npx serve .
+  ```
 
 ---
 
-# 👩‍💻 Developer
-
-## Prachi Pandey
-
-🎓 B.Tech — Artificial Intelligence & Data Science
-
-🔗 GitHub:
-https://github.com/Prachipandey28
+## 🔮 Future Roadmap
+* [ ] **AI-Powered Trivia Generator**: Dynamically synthesize questions on any topic using real-time generative models.
+* [ ] **Voice-Activated Gameplay**: Hands-free gameplay using browser voice recognition.
+* [ ] **Cloud Account Sync**: Full database persistence to sync badges across devices.
+* [ ] **Global Matchmaking Lobby**: Matchmaking servers for automated multiplayer queuing.
 
 ---
 
-# ⭐ Show Your Support
+## 👩‍💻 Developer
 
-If you enjoyed this project:
+### Prachi Pandey
+🎓 **B.Tech — Artificial Intelligence & Data Science**
 
-⭐ Star the repository
-🍴 Fork the project
-📢 Share it with others
-
----
-
-<div align="center">
-
-## 🚀 “Learning becomes legendary when competition meets intelligence.”
-
-</div>
+* 🔗 **GitHub Profile**: [Prachipandey28](https://github.com/Prachipandey28)
+* 💡 Specialty: Deep Learning, Intelligent Web Interfaces, and Interactive Gamification.
 
 ---
 
-# 📜 License
-
-This project is licensed under the MIT License.
+## 📜 License
+This project is open-source and licensed under the **MIT License**.
