@@ -270,6 +270,7 @@ const TOPICS = [
   { id:'anime',       name:'Anime Quiz',       icon:'⚡', category:'general' },
   { id:'science',     name:'Science Quiz',     icon:'🧪', category:'general' },
   { id:'sports',      name:'Sports Quiz',      icon:'⚽', category:'general' },
+  { id:'food',        name:'Indian Food',      icon:'🍕', category:'general' },
   { id:'spin',        name:'Spin Wheel Quiz',  icon:'🎡', category:'general' },
   // Programming
   { id:'python',      name:'Python',           icon:'🐍', category:'programming' },
@@ -482,6 +483,16 @@ const QUESTIONS = {
     { q:'What is the maximum score possible in a single frame of bowling?', opts:['10', '20', '30', '300'], ans:2 },
     { q:'In tennis, what word is used to describe a score of zero?', opts:['Nil', 'Love', 'Zilch', 'Nada'], ans:1 },
     { q:'Which NBA player is widely known as \'King James\'?', opts:['Stephen Curry', 'Kevin Durant', 'LeBron James', 'Michael Jordan'], ans:2 }
+  ],
+  food: [
+    { q:'Which Indian bread is traditionally baked inside a clay oven (tandoor)?', opts:['Roti', 'Naan', 'Paratha', 'Puri'], ans:1 },
+    { q:'What is the primary ingredient of the famous sweet \'Motichoor Ladoo\'?', opts:['Gram Flour (Besan)', 'Semolina (Suji)', 'Milk Solids (Khoya)', 'Wheat Flour'], ans:0 },
+    { q:'Which spice is known as the \'King of Spices\' in India?', opts:['Cardamom', 'Cumin', 'Black Pepper', 'Turmeric'], ans:2 },
+    { q:'What is the main flavor profile of the South Indian dish \'Rasam\'?', opts:['Sweet & Creamy', 'Tangy & Spicy', 'Bitter & Herby', 'Salty & Nutty'], ans:1 },
+    { q:'Which city is universally famous for its aromatic and flavorful Biryani?', opts:['Mumbai', 'Hyderabad', 'Kolkata', 'Delhi'], ans:1 },
+    { q:'What is \'Ghee\' commonly known as in culinary terms?', opts:['Clarified Butter', 'Condensed Milk', 'Buttermilk', 'Curd'], ans:0 },
+    { q:'Which Indian street food literally translates to \'Water Bread\'?', opts:['Samosa', 'Gol Gappa (Pani Puri)', 'Bhel Puri', 'Aloo Tikki'], ans:1 },
+    { q:'What gives the traditional Kashmiri dish \'Rogan Josh\' its signature deep red color?', opts:['Red Food Coloring', 'Kashmiri Red Chillies', 'Tomato Paste', 'Beetroot Juice'], ans:1 }
   ]
 };
 
@@ -546,7 +557,8 @@ function filterCategory(cat, btn) {
 
 function renderTopics() {
   const grid = document.getElementById('topics-grid');
-  const visible = activeCategory === 'all' ? TOPICS : TOPICS.filter(t => t.category === activeCategory);
+  const visible = (activeCategory === 'all' ? TOPICS : TOPICS.filter(t => t.category === activeCategory))
+                  .filter(t => t.id !== 'spin');
   grid.innerHTML = visible.map(t => `
     <div class="topic-card ${selectedTopic === t.id ? 'selected' : ''}" id="tc-${t.id}" onclick="selectTopic('${t.id}')">
       <div class="topic-name" style="margin-top: 4px;">${t.name}</div>
@@ -2156,7 +2168,8 @@ const SPIN_CATEGORIES = [
   { id: 'science', name: 'Science', icon: '🧪', color: '#0F6E56' },
   { id: 'ai',      name: 'AI Quiz',  icon: '🤖', color: '#534AB7' },
   { id: 'movies',  name: 'Movies',   icon: '🎬', color: '#993C1D' },
-  { id: 'sports',  name: 'Sports',   icon: '⚽', color: '#854F0B' }
+  { id: 'sports',  name: 'Sports',   icon: '⚽', color: '#854F0B' },
+  { id: 'food',    name: 'Indian Food', icon: '🍕', color: '#C23B1D' }
 ];
 
 function selectSpinDiff(d) {
@@ -2288,7 +2301,9 @@ function triggerWheelSpin() {
   const targetIndex = Math.floor(Math.random() * SPIN_CATEGORIES.length);
   const chosenCategory = SPIN_CATEGORIES[targetIndex];
   
-  const targetAngle = 8 * Math.PI * 2 + (1.5 * Math.PI - (targetIndex + 0.5) * Math.PI / 2) + (Math.random() - 0.5) * (Math.PI / 2) * 0.75;
+  const N = SPIN_CATEGORIES.length;
+  const sliceAngle = (Math.PI * 2) / N;
+  const targetAngle = 8 * Math.PI * 2 + (1.5 * Math.PI - (targetIndex + 0.5) * sliceAngle) + (Math.random() - 0.5) * sliceAngle * 0.75;
   const duration = 3500;
   const startTime = performance.now();
   let lastTickSector = -1;
@@ -2308,7 +2323,7 @@ function triggerWheelSpin() {
     
     let normalized = (1.5 * Math.PI - currentAngle) % (Math.PI * 2);
     if (normalized < 0) normalized += Math.PI * 2;
-    const sectorIndex = Math.floor(normalized / (Math.PI / 2));
+    const sectorIndex = Math.floor(normalized / sliceAngle);
     
     if (sectorIndex !== lastTickSector) {
       if (typeof playTickSound === 'function') {
