@@ -27,6 +27,15 @@ It is designed for trivia enthusiasts and developers alike, blending real-time p
 
 ---
 
+## 📸 Project Showcase
+
+<div align="center">
+  <p><strong>🏠 Beautiful Glassmorphism Home Lobby & Theme Suite</strong></p>
+  <img width="100%" alt="QuizBrain Main Lobby Showcase" src="https://github.com/user-attachments/assets/4fc39e5e-0255-4d2e-bd02-bcddc1baff84" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); border: 1.5px solid var(--border);" />
+</div>
+
+---
+
 ## 🕹️ Immersive Game Modes
 
 ### 1. ⚔️ Real-Time Multiplayer Arena
@@ -65,6 +74,16 @@ A modular badge-calculation engine handles complex evaluation criteria across hi
 | **🔥 Perfect 5** | Flawless Execution | Achieve a perfect 5/5 score in any solo game. |
 | **⚡ Fast Thinker** | Precision Under Pressure | Average response time of $< 5$ seconds per question with a score of $\ge 4$. |
 | **🎡 Wheel Master** | Conqueror of Chance | Complete a Spin Wheel Quiz run with a final score of 4 or 5. |
+
+---
+
+## 📊 Analytics Dashboard
+
+Track your performance using beautiful visual dashboards powered by **Chart.js**.
+
+<div align="center">
+  <img width="85%" alt="Analytics Dashboard" src="https://github.com/user-attachments/assets/5b18ceba-75aa-47e5-aa1f-5638985161a1" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+</div>
 
 ---
 
@@ -110,6 +129,25 @@ Using raw mathematical waves, it generates crisp synth patterns on the fly:
 * **Incorrect Answer buzzer**: A sliding frequency sweep (triangle wave descending from 220Hz $\rightarrow$ 120Hz).
 * **Achievement Unlock triumph**: A complex major-arpeggiated triad chord (C5 $\rightarrow$ E5 $\rightarrow$ G5 $\rightarrow$ C6).
 * **Spin Wheel Tick**: Tiny high-frequency pulses (1200Hz sine waves decaying in 40ms) to simulate mechanical cog clicks.
+
+---
+
+## ⚔️ Multiplayer & Leaderboard Arena
+
+<div align="center">
+  <table border="0">
+    <tr>
+      <td width="55%">
+        <p align="center"><strong>⚔️ Real-Time P2P Matchmaking Lobby</strong></p>
+        <img width="100%" alt="Multiplayer Battle Arena" src="https://github.com/user-attachments/assets/1796beac-e217-4c02-a885-85315e587cba" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+      </td>
+      <td width="45%">
+        <p align="center"><strong>🏆 Firebase Global Leaderboard</strong></p>
+        <img width="100%" alt="Leaderboard" src="https://github.com/user-attachments/assets/592ace64-7153-4ca6-9fd2-8767c7f79ff4" style="border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);" />
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
@@ -166,14 +204,6 @@ Since the game is built purely with **Vanilla Web Technologies**, there are no c
   # Node.js
   npx serve .
   ```
-
----
-
-## 🔮 Future Roadmap
-* [ ] **AI-Powered Trivia Generator**: Dynamically synthesize questions on any topic using real-time generative models.
-* [ ] **Voice-Activated Gameplay**: Hands-free gameplay using browser voice recognition.
-* [ ] **Cloud Account Sync**: Full database persistence to sync badges across devices.
-* [ ] **Global Matchmaking Lobby**: Matchmaking servers for automated multiplayer queuing.
 
 ---
 
