@@ -271,6 +271,7 @@ const TOPICS = [
   { id:'science',     name:'Science Quiz',     icon:'🧪', category:'general' },
   { id:'sports',      name:'Sports Quiz',      icon:'⚽', category:'general' },
   { id:'food',        name:'Indian Food',      icon:'🍕', category:'general' },
+  { id:'bollywood',   name:'Bollywood Music',  icon:'🎵', category:'general' },
   { id:'spin',        name:'Spin Wheel Quiz',  icon:'🎡', category:'general' },
   // Programming
   { id:'python',      name:'Python',           icon:'🐍', category:'programming' },
@@ -493,6 +494,16 @@ const QUESTIONS = {
     { q:'What is \'Ghee\' commonly known as in culinary terms?', opts:['Clarified Butter', 'Condensed Milk', 'Buttermilk', 'Curd'], ans:0 },
     { q:'Which Indian street food literally translates to \'Water Bread\'?', opts:['Samosa', 'Gol Gappa (Pani Puri)', 'Bhel Puri', 'Aloo Tikki'], ans:1 },
     { q:'What gives the traditional Kashmiri dish \'Rogan Josh\' its signature deep red color?', opts:['Red Food Coloring', 'Kashmiri Red Chillies', 'Tomato Paste', 'Beetroot Juice'], ans:1 }
+  ],
+  bollywood: [
+    { q:'Which legendary singer holds the record for singing in the most Indian languages?', opts:['Kishore Kumar', 'Lata Mangeshkar', 'S. P. Balasubrahmanyam', 'Asha Bhosle'], ans:2 },
+    { q:'Who composed the Oscar-winning song \'Jai Ho\' from the movie Slumdog Millionaire?', opts:['A. R. Rahman', 'Pritam', 'Amit Trivedi', 'Sanjay Leela Bhansali'], ans:0 },
+    { q:'Which Bollywood film features the famous song \'Tujhe Dekha Toh Yeh Jaana Sanam\'?', opts:['Kuch Kuch Hota Hai', 'Dilwale Dulhania Le Jayenge', 'Kabhi Khushi Kabhie Gham', 'Mohabbatein'], ans:1 },
+    { q:'What traditional Indian stringed instrument is famously played by classical maestro Pandit Ravi Shankar?', opts:['Sitar', 'Sarod', 'Tabla', 'Flute'], ans:0 },
+    { q:'Which singer is known as the \'King of Playback Singing\' in the 90s, famous for songs like \'Tujhe Dekha Toh\'?', opts:['Udit Narayan', 'Kumar Sanu', 'Sonu Nigam', 'Abhijeet Bhattacharya'], ans:1 },
+    { q:'The energetic dance track \'Chaiyya Chaiyya\' was famously shot on top of what?', opts:['A moving train', 'A high-rise building', 'A cruise ship', 'A mountain peak'], ans:0 },
+    { q:'Which lyricist wrote the beautiful songs for iconic movies like Lagaan and Dil Chahta Hai?', opts:['Gulzar', 'Javed Akhtar', 'Prasoon Joshi', 'Anand Bakshi'], ans:1 },
+    { q:'Which musical duo composed the timeless soundtrack for the 1990 movie \'Aashiqui\'?', opts:['Nadeem-Shravan', 'Jatin-Lalit', 'Anand-Milind', 'Laxmikant-Pyarelal'], ans:0 }
   ]
 };
 
@@ -2169,7 +2180,8 @@ const SPIN_CATEGORIES = [
   { id: 'ai',      name: 'AI Quiz',  icon: '🤖', color: '#534AB7' },
   { id: 'movies',  name: 'Movies',   icon: '🎬', color: '#993C1D' },
   { id: 'sports',  name: 'Sports',   icon: '⚽', color: '#854F0B' },
-  { id: 'food',    name: 'Indian Food', icon: '🍕', color: '#C23B1D' }
+  { id: 'food',    name: 'Indian Food', icon: '🍕', color: '#C23B1D' },
+  { id: 'bollywood', name: 'Bollywood', icon: '🎵', color: '#0ea5e9' }
 ];
 
 function selectSpinDiff(d) {
