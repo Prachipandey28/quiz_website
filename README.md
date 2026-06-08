@@ -1,7 +1,6 @@
 # 🧠 QuizBrain — The Ultimate Gamified Multiplayer Quiz Platform
 
 <div align="center">
-<!-- mohchi -->
 <img src="https://readme-typing-svg.demolab.com?font=Sora&weight=700&size=28&pause=1000&color=6C63FF&center=true&vCenter=true&width=900&lines=Real-Time+Multiplayer+Quiz+Platform;Gamified+Learning+Experience;Analytics+%2B+Achievements+%2B+Daily+Challenges;Built+with+Vanilla+JavaScript" />
 
 <br/>
